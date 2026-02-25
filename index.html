@@ -780,6 +780,43 @@
         const aiError = document.getElementById('ai-error');
 
         async function fetchGeminiRecommendations(prompt) {
+            // Détection : Appel au backend sécurisé Vercel (si en production)
+            // ou appel direct (si dans cet éditeur de prévisualisation)
+            const isProduction = window.location.hostname !== "" && !window.location.hostname.includes('usercontent.goog');
+
+            if (isProduction) {
+                const delays = [1000, 2000, 4000, 8000, 16000];
+                for (let attempt = 0; attempt <= 5; attempt++) {
+                    try {
+                        // Appel du backend Vercel qui contient la clé cachée
+                        const response = await fetch('/api/gemini', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ prompt: prompt })
+                        });
+                        
+                        if (!response.ok) throw new Error(`Erreur API Vercel: ${response.status}`);
+                        
+                        const data = await response.json();
+                        const textContent = data.candidates?.[0]?.content?.parts?.[0]?.text;
+                        if (!textContent) throw new Error("Réponse vide de Gemini");
+                        
+                        return JSON.parse(textContent);
+                    } catch (error) {
+                        if (attempt === 5) {
+                            console.error("API Vercel a échoué après 5 tentatives:", error);
+                            throw error;
+                        }
+                        console.log(`Tentative ${attempt + 1} échouée, nouvel essai dans ${delays[attempt]}ms...`);
+                        await new Promise(res => setTimeout(res, delays[attempt]));
+                    }
+                }
+                return; // Fin de l'exécution si on est en prod
+            }
+
+            // ===============================================
+            // CODE DE SECOURS (Uniquement pour cet éditeur)
+            // ===============================================
             const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
             
             const payload = {
