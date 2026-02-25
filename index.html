@@ -23,67 +23,69 @@
         }
     </script>
     <style>
-        /* Cacher la barre de défilement pour les rangées de films */
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-        .no-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
+        /* Cacher la barre de défilement */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
         .header-scrolled {
-            background-color: rgba(5, 5, 5, 0.8);
+            background-color: rgba(5, 5, 5, 0.9);
             backdrop-filter: blur(12px);
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
         }
 
-        .poster-card {
-            transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        }
-        .poster-card:hover {
-            transform: scale(1.05);
-            z-index: 10;
-        }
+        .poster-card { transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+        .poster-card:hover { transform: scale(1.05); z-index: 10; }
 
         @keyframes float {
             0%, 100% { transform: translateY(0) scale(1); }
             50% { transform: translateY(-20px) scale(1.02); }
         }
-        .animate-float {
-            animation: float 8s ease-in-out infinite;
-        }
+        .animate-float { animation: float 8s ease-in-out infinite; }
 
         @keyframes pulse-glow {
             0%, 100% { box-shadow: 0 0 15px rgba(229,9,20,0.4); }
             50% { box-shadow: 0 0 30px rgba(229,9,20,0.8); transform: scale(1.02); }
         }
-        .animate-pulse-glow {
-            animation: pulse-glow 2.5s infinite;
+        .animate-pulse-glow { animation: pulse-glow 2.5s infinite; }
+
+        /* Brillance Snapchat */
+        @keyframes shine {
+            0% { left: -100%; }
+            20% { left: 100%; }
+            100% { left: 100%; }
+        }
+        .snap-btn-shine {
+            position: relative;
+            overflow: hidden;
+            animation: snap-highlight-glow 2s ease-in-out infinite;
+        }
+        .snap-btn-shine::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -100%;
+            width: 60%;
+            height: 200%;
+            background: rgba(255, 255, 255, 0.6);
+            transform: rotate(30deg);
+            animation: shine 4s infinite linear;
+            pointer-events: none;
         }
 
         @keyframes snap-highlight-glow {
             0%, 100% { box-shadow: 0 0 15px rgba(255, 252, 0, 0.5); transform: scale(1); }
-            50% { box-shadow: 0 0 35px rgba(255, 252, 0, 0.9); transform: scale(1.1); }
-        }
-        .snap-highlight {
-            animation: snap-highlight-glow 2s ease-in-out infinite;
+            50% { box-shadow: 0 0 35px rgba(255, 252, 0, 0.8); transform: scale(1.08); }
         }
 
+        /* Particules pop-corn */
         @keyframes drift {
-            from { transform: translateY(100vh) translateX(0) rotate(0deg); opacity: 0; }
+            from { transform: translateY(100vh) rotate(0deg); opacity: 0; }
             10% { opacity: 0.3; }
             90% { opacity: 0.3; }
-            to { transform: translateY(-20vh) translateX(100px) rotate(360deg); opacity: 0; }
+            to { transform: translateY(-20vh) translateX(50px) rotate(360deg); opacity: 0; }
         }
-        .particle {
-            position: absolute;
-            pointer-events: none;
-            z-index: -1;
-            animation: drift linear infinite;
-            opacity: 0;
-        }
+        .particle { position: absolute; pointer-events: none; animation: drift linear infinite; opacity: 0; }
 
         #particle-container {
             position: absolute;
@@ -93,7 +95,35 @@
             height: calc(100% - 85vh);
             z-index: -1;
             overflow: hidden;
-            pointer-events: none;
+        }
+
+        /* Design Popcorn AI */
+        .ai-gradient-border {
+            position: relative;
+            background: rgba(10, 10, 10, 0.85);
+            border-radius: 2.5rem;
+            z-index: 1;
+        }
+        .ai-gradient-border::before {
+            content: "";
+            position: absolute;
+            inset: -2px;
+            background: linear-gradient(45deg, #E50914, #fbbf24, #8b5cf6, #E50914);
+            background-size: 400% 400%;
+            z-index: -1;
+            border-radius: 2.5rem;
+            animation: border-anim 6s linear infinite;
+        }
+        @keyframes border-anim {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .card-3d-effect {
+            transition: transform 0.1s ease-out, box-shadow 0.1s ease-out;
+            transform-style: preserve-3d;
+            will-change: transform;
         }
 
         @keyframes fadeInUp {
@@ -107,364 +137,398 @@
         .glass-panel {
             background: rgba(255, 255, 255, 0.03);
             backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
             border: 1px solid rgba(255, 255, 255, 0.08);
         }
-        
-        .ai-gradient-border {
-            position: relative;
-            background: rgba(10, 10, 10, 0.8);
-            border-radius: 2rem;
-            z-index: 1;
-        }
-        .ai-gradient-border::before {
-            content: "";
-            position: absolute;
-            inset: -2px;
-            background: linear-gradient(45deg, #E50914, #fbbf24, #8b5cf6, #E50914);
-            background-size: 400% 400%;
-            z-index: -1;
-            border-radius: 2rem;
-            animation: border-anim 8s linear infinite;
-        }
-        @keyframes border-anim {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+        .glass-input {
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .faq-answer {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.4s ease-out, opacity 0.4s ease-out;
-            opacity: 0;
-        }
-        .faq-item.active .faq-answer {
-            max-height: 200px;
-            opacity: 1;
-            padding: 1rem 1.5rem 1.5rem 1.5rem;
-        }
+        .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.4s ease-out; opacity: 0; padding: 0 1.5rem; }
+        .faq-item.active .faq-answer { max-height: 200px; opacity: 1; padding: 1rem 1.5rem 1.5rem 1.5rem; }
+        .faq-icon { transition: transform 0.3s ease; }
+        .faq-item.active .faq-icon { transform: rotate(45deg); }
     </style>
 </head>
 <body class="bg-[#050505] text-white font-sans antialiased overflow-x-hidden relative selection:bg-brand selection:text-white">
 
     <!-- FOND AMBIANT -->
     <div class="fixed inset-0 z-[-2] overflow-hidden pointer-events-none">
-        <div class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-brand/10 rounded-full mix-blend-screen filter blur-[120px] animate-float"></div>
-        <div class="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-purple-900/10 rounded-full mix-blend-screen filter blur-[150px] animate-float" style="animation-delay: 2s;"></div>
+        <div class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-brand/10 rounded-full filter blur-[120px] animate-float"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-purple-900/10 rounded-full filter blur-[150px] animate-float" style="animation-delay: 2s;"></div>
     </div>
 
     <div id="particle-container"></div>
 
+    <!-- Navigation -->
     <header id="navbar" class="fixed w-full top-0 z-50 transition-all duration-300 px-4 md:px-12 py-4">
         <div class="flex items-center justify-between">
             <div class="flex items-center gap-8">
-                <a href="#" class="text-brand font-bold text-3xl md:text-4xl tracking-tighter uppercase" style="font-family: 'Arial Black', sans-serif; text-shadow: 0 2px 10px rgba(229,9,20,0.5);">
-                    Popcorn TV
-                </a>
+                <a href="#accueil" class="text-brand font-bold text-3xl md:text-4xl tracking-tighter uppercase" style="font-family: 'Arial Black', sans-serif;">Popcorn TV</a>
                 <nav class="hidden md:flex gap-6 text-sm text-gray-300 font-medium">
-                    <a href="#accueil" class="hover:text-white transition-colors">Accueil</a>
-                    <a href="#ia-reco" class="hover:text-white transition-colors">Popcorn AI</a>
-                    <a href="#offres" class="hover:text-white transition-colors">Nos Offres</a>
-                    <a href="#faq" class="hover:text-white transition-colors">FAQ</a>
+                    <a href="#accueil" class="nav-link hover:text-white transition-colors">Accueil</a>
+                    <a href="#concept" class="nav-link hover:text-white transition-colors">Le Concept</a>
+                    <a href="#offres" class="nav-link hover:text-white transition-colors">Nos Offres</a>
+                    <a href="#faq" class="nav-link hover:text-white transition-colors">FAQ</a>
                 </nav>
             </div>
             <div class="flex items-center gap-4">
-                <a href="#offres" class="hidden md:block bg-brand text-white px-6 py-2.5 rounded-full font-bold transition-all animate-pulse-glow text-sm">
-                    S'abonner
-                </a>
-                <button id="mobileMenuBtn" class="md:hidden text-white">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
-                </button>
+                <a href="#offres" class="hidden md:block bg-brand text-white px-6 py-2.5 rounded-full font-bold transition-all animate-pulse-glow text-sm">S'abonner</a>
+                <button id="mobileMenuBtn" class="md:hidden text-white"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></button>
             </div>
         </div>
         <div id="mobileMenu" class="md:hidden hidden bg-black/95 backdrop-blur-xl absolute top-full left-0 w-full border-t border-white/10 flex flex-col items-center py-6 gap-6 shadow-2xl">
-            <a href="#accueil" class="mobile-link text-lg font-medium hover:text-brand transition-colors">Accueil</a>
-            <a href="#ia-reco" class="mobile-link text-lg font-medium hover:text-brand transition-colors">Popcorn AI</a>
-            <a href="#offres" class="mobile-link text-lg font-medium hover:text-brand transition-colors">Nos Offres</a>
-            <a href="#faq" class="mobile-link text-lg font-medium hover:text-brand transition-colors">FAQ</a>
+            <a href="#accueil" class="nav-link text-lg font-medium">Accueil</a>
+            <a href="#concept" class="nav-link text-lg font-medium">Le Concept</a>
+            <a href="#offres" class="nav-link text-lg font-medium">Nos Offres</a>
+            <a href="#faq" class="nav-link text-lg font-medium">FAQ</a>
         </div>
     </header>
 
+    <!-- Section Hero -->
     <section id="accueil" class="relative h-[85vh] w-full flex items-center justify-start px-4 md:px-12 overflow-hidden">
-        <div class="absolute inset-0 w-full h-full z-0">
-            <img src="https://images.unsplash.com/photo-1593784991095-a205069470b6?q=80&w=2070&auto=format&fit=crop" alt="Cinéma maison" class="w-full h-full object-cover opacity-30 mix-blend-overlay">
+        <div class="absolute inset-0 z-0">
+            <img src="https://images.unsplash.com/photo-1593784991095-a205069470b6?q=80&w=2070&auto=format&fit=crop" class="w-full h-full object-cover opacity-30 mix-blend-overlay">
             <div class="absolute inset-0 bg-gradient-to-r from-[#050505] via-[#050505]/40 to-transparent"></div>
             <div class="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent"></div>
         </div>
-
         <div class="relative z-30 max-w-2xl mt-16 animate-fade-in-up">
-            <div class="inline-block bg-brand/20 border border-brand/50 text-white px-4 py-1.5 rounded-full text-xs font-bold tracking-widest mb-6 shadow-[0_0_15px_rgba(229,9,20,0.3)] backdrop-blur-md">
-                STREAMING ILLIMITÉ
-            </div>
-            <h1 class="text-5xl md:text-8xl font-black mb-8 leading-tight drop-shadow-2xl tracking-tighter">
-                L'expérience ultime.<br><span class="text-brand">Où vous voulez.</span>
-            </h1>
-            
-            <div class="flex flex-col sm:flex-row gap-4 mt-8">
-                <a href="#offres" class="flex items-center justify-center gap-2 bg-white text-black hover:bg-gray-200 px-8 py-4 rounded-full font-bold text-lg transition-all shadow-[0_0_20px_rgba(255,255,255,0.2)]">
-                    Voir nos offres IPTV
-                </a>
-                <a href="#ia-reco" class="flex items-center justify-center gap-2 glass-panel hover:bg-white/10 px-8 py-4 rounded-full font-bold text-lg transition-colors text-white">
-                    Essayer l'IA
-                </a>
+            <div class="inline-block bg-brand/20 border border-brand/50 text-white px-4 py-1.5 rounded-full text-xs font-bold mb-6 backdrop-blur-md">STREAMING ILLIMITÉ</div>
+            <h1 class="text-5xl md:text-8xl font-black mb-8 leading-tight tracking-tighter">L'expérience ultime.<br><span class="text-brand">Où vous voulez.</span></h1>
+            <div class="flex flex-col sm:flex-row gap-4 mt-12">
+                <a href="#offres" class="flex items-center justify-center gap-2 bg-white text-black px-8 py-4 rounded-full font-bold text-lg shadow-[0_0_20px_rgba(255,255,255,0.2)]">Voir nos offres IPTV</a>
+                <a href="#concept" class="flex items-center justify-center gap-2 bg-white/5 border border-white/10 hover:bg-white/10 px-8 py-4 rounded-full font-bold text-lg text-white">Comment ça marche ?</a>
             </div>
         </div>
     </section>
 
-    <!-- POPCORN AI -->
+    <!-- Section Popcorn AI -->
     <section id="ia-reco" class="py-24 px-4 md:px-12 relative z-20">
         <div class="max-w-5xl mx-auto">
-            <div class="text-center mb-12">
-                <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gradient-to-r from-brand to-purple-600 text-[10px] font-black tracking-widest uppercase mb-4 shadow-lg shadow-brand/20">
-                    Propulsé par Popcorn AI
-                </div>
-                <h2 class="text-4xl md:text-6xl font-black mb-4 text-white">Votre assistant cinéma.</h2>
-                <p class="text-gray-400 text-lg font-light max-w-2xl mx-auto">Décrivez votre humeur, et notre IA scanne des milliers de films pour vous proposer la soirée parfaite.</p>
+            <div class="text-center mb-16">
+                <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gradient-to-r from-brand to-purple-600 text-[10px] font-black tracking-widest uppercase mb-4 shadow-lg shadow-brand/20">NOUVEAU : POPCORN AI</div>
+                <h2 class="text-4xl md:text-7xl font-black mb-4">Votre assistant cinéma.</h2>
+                <p class="text-gray-400 text-lg font-light">Quelle ambiance cherchez-vous ce soir ?</p>
             </div>
-
-            <div class="ai-gradient-border p-1 md:p-8 shadow-2xl">
-                <div class="bg-[#0a0a0a] rounded-[1.8rem] p-6 md:p-10">
-                    <form id="ai-form" class="relative z-10">
-                        <div class="flex flex-col md:flex-row gap-4 items-center">
-                            <div class="relative w-full">
-                                <input type="text" id="ai-input" required class="w-full bg-white/5 border border-white/10 rounded-2xl p-5 text-white text-lg focus:outline-none focus:border-brand transition-all placeholder-gray-600" placeholder="Ex: Un film d'action des années 90 dans l'espace...">
-                                <div class="absolute right-4 top-1/2 -translate-y-1/2 text-brand/50">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                                </div>
-                            </div>
-                            <button type="submit" id="ai-btn" class="w-full md:w-auto bg-brand hover:bg-brand-dark text-white px-10 py-5 rounded-2xl font-black text-lg transition-all shadow-xl hover:scale-105 whitespace-nowrap">
-                                Analyser
-                            </button>
-                        </div>
+            <div class="ai-gradient-border p-1 shadow-2xl">
+                <div class="bg-[#0a0a0a] rounded-[2.4rem] p-6 md:p-12">
+                    <form id="ai-form" class="relative z-10 flex flex-col md:flex-row gap-4">
+                        <input type="text" id="ai-input" required class="flex-grow bg-white/5 border border-white/10 rounded-2xl p-5 text-white text-lg focus:outline-none focus:border-brand transition-all placeholder-gray-600" placeholder="Ex: Un thriller sombre sous la pluie...">
+                        <button type="submit" id="ai-btn" class="bg-brand hover:bg-brand-dark px-10 py-5 rounded-2xl font-black text-xl transition-all">Demander à Popcorn AI</button>
                     </form>
-
-                    <div id="ai-loading" class="hidden flex-col items-center justify-center py-16">
-                        <div class="relative w-20 h-20">
-                            <div class="absolute inset-0 border-4 border-brand/20 rounded-full"></div>
-                            <div class="absolute inset-0 border-4 border-brand rounded-full border-t-transparent animate-spin"></div>
-                        </div>
-                        <p class="text-brand font-bold mt-6 tracking-widest animate-pulse uppercase text-xs">Popcorn AI prépare le popcorn...</p>
+                    <div id="ai-loading" class="hidden flex flex-col items-center py-16">
+                        <div class="w-12 h-12 border-4 border-brand border-t-transparent rounded-full animate-spin"></div>
+                        <p class="text-brand font-bold mt-4 animate-pulse">POPCORN AI RÉFLÉCHIT...</p>
                     </div>
-
                     <div id="ai-results" class="hidden grid-cols-1 md:grid-cols-3 gap-6 mt-12 pt-12 border-t border-white/5"></div>
-                    
-                    <div id="ai-error" class="hidden text-brand text-center mt-6 p-4 bg-brand/10 border border-brand/30 rounded-xl">
-                        Popcorn AI rencontre un souci. Vérifiez votre clé API et réessayez.
-                    </div>
+                    <div id="ai-error" class="hidden text-brand text-center mt-6 p-4 bg-brand/10 border border-brand/30 rounded-xl font-bold">Connexion impossible. L'IA a rencontré une erreur ou la clé API est absente de Vercel.</div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- CATALOGUE -->
+    <!-- Concept -->
+    <section id="concept" class="py-16 px-4 md:px-12 relative z-20">
+        <h2 class="text-2xl md:text-3xl font-bold mb-8 text-white">L'excellence Popcorn TV</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="card-3d-effect glass-panel p-8 rounded-3xl">
+                <div class="bg-brand/20 w-14 h-14 rounded-full flex items-center justify-center mb-6 text-brand border border-brand/30"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg></div>
+                <h3 class="text-xl font-bold mb-3">Catalogue Illimité</h3>
+                <p class="text-gray-400 font-light leading-relaxed">Accédez aux nouveautés cinéma, séries et événements sportifs.</p>
+            </div>
+            <div class="card-3d-effect glass-panel p-8 rounded-3xl">
+                <div class="bg-brand/20 w-14 h-14 rounded-full flex items-center justify-center mb-6 text-brand border border-brand/30"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg></div>
+                <h3 class="text-xl font-bold mb-3">Stabilité Renforcée</h3>
+                <p class="text-gray-400 font-light leading-relaxed">Serveurs ultra-solides garantissant un streaming sans coupure.</p>
+            </div>
+            <div class="card-3d-effect glass-panel p-8 rounded-3xl">
+                <div class="bg-brand/20 w-14 h-14 rounded-full flex items-center justify-center mb-6 text-brand border border-brand/30"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2v6h-6"></path><path d="M3 12a9 9 0 0 1 15-6.7L21 8"></path></svg></div>
+                <h3 class="text-xl font-bold mb-3">Qualité Parfaite</h3>
+                <p class="text-gray-400 font-light leading-relaxed">Une image claire, jusqu'à la perfection 4K Ultra HD.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Catalogue -->
     <section class="py-12 relative z-20">
-        <h2 class="text-2xl md:text-3xl font-bold mb-8 px-4 md:px-12 text-white">Populaires sur Popcorn TV</h2>
+        <h2 class="text-2xl md:text-3xl font-bold mb-8 px-4 md:px-12 text-white">Populaire sur Popcorn TV</h2>
         <div class="relative group px-4 md:px-12">
-            <button id="scroll-left" class="absolute left-6 top-1/2 -translate-y-1/2 z-30 bg-black/80 text-white p-3 rounded-full opacity-0 group-hover:opacity-100 transition-all border border-white/10 shadow-2xl">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
-            </button>
+            <button id="scroll-left" class="hidden md:flex absolute left-4 top-1/2 -translate-y-1/2 z-30 bg-black/60 text-white p-3 rounded-full opacity-0 group-hover:opacity-100 transition-all border border-white/10 shadow-lg"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></button>
             <div id="row1" class="flex gap-4 overflow-x-auto no-scrollbar pb-8 pt-4 snap-x scroll-smooth">
                 <script>
                     const movies = ['1536440136628-849c177e76a1', '1626814026160-2237a95fc5a0', '1616530940355-351fabd9524b', '1585647347392-50d4b1a13e28', '1574267432553-4b4628081c31', '1598899134739-24c46f58b8c0', '1535016120720-40c746da90ab', '1604998103924-89e012e5265a'];
                     movies.forEach(id => {
-                        document.write(`
-                            <div class="poster-card flex-none w-[180px] md:w-[260px] aspect-[2/3] bg-zinc-900 rounded-2xl overflow-hidden snap-start relative cursor-pointer shadow-2xl border border-white/5">
-                                <img src="https://images.unsplash.com/photo-${id}?q=80&w=400&auto=format&fit=crop" class="w-full h-full object-cover" alt="Film">
-                                <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-0 hover:opacity-100 transition-opacity flex items-end p-6">
-                                    <div class="bg-brand w-12 h-12 rounded-full flex items-center justify-center shadow-lg"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg></div>
-                                </div>
-                            </div>
-                        `);
+                        document.write(`<div class="poster-card flex-none w-[180px] md:w-[240px] aspect-[2/3] bg-zinc-900 rounded-xl overflow-hidden snap-start relative cursor-pointer border border-white/5"><img src="https://images.unsplash.com/photo-${id}?q=80&w=400&auto=format&fit=crop" class="w-full h-full object-cover opacity-90"></div>`);
                     });
                 </script>
             </div>
-            <button id="scroll-right" class="absolute right-6 top-1/2 -translate-y-1/2 z-30 bg-black/80 text-white p-3 rounded-full opacity-0 group-hover:opacity-100 transition-all border border-white/10 shadow-2xl">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
-            </button>
+            <button id="scroll-right" class="hidden md:flex absolute right-4 top-1/2 -translate-y-1/2 z-30 bg-black/60 text-white p-3 rounded-full opacity-0 group-hover:opacity-100 transition-all border border-white/10 shadow-lg"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></button>
         </div>
     </section>
 
-    <!-- OFFRES -->
-    <section id="offres" class="py-24 px-4 md:px-12 relative z-20">
-        <div class="text-center mb-16">
-            <h2 class="text-3xl md:text-5xl font-black mb-4">Plans Disponibles</h2>
-            <p class="text-gray-400">Qualité premium, accès instantané.</p>
-        </div>
+    <!-- Offres -->
+    <section id="offres" class="py-20 px-4 md:px-12 relative z-20">
+        <h2 class="text-3xl md:text-5xl font-black mb-16 text-center">Nos Offres IPTV</h2>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            <div class="glass-panel rounded-3xl p-10 flex flex-col border border-white/10">
-                <h3 class="text-2xl font-bold mb-4 uppercase tracking-widest">Basic</h3>
-                <div class="text-4xl font-black mb-8">50€<span class="text-sm font-normal text-gray-400">/an</span></div>
-                <button onclick="selectPlan('50')" class="w-full py-4 rounded-xl bg-white/5 border border-white/10 font-bold hover:bg-white/10 transition-all">Choisir</button>
+            <div class="card-3d-effect glass-panel rounded-3xl p-8 flex flex-col border border-white/10">
+                <h3 class="text-2xl font-bold mb-4 uppercase">Basic</h3>
+                <div class="text-4xl font-black mb-8">50€</div>
+                <ul class="flex-grow space-y-4 text-gray-300 text-sm mb-8">
+                    <li><strong class="text-white">Contenu :</strong> standard</li>
+                    <li><strong class="text-white">Stabilité :</strong> correcte</li>
+                    <li><strong class="text-white">Qualité :</strong> HD</li>
+                </ul>
+                <button onclick="selectPlan('50')" class="w-full py-4 rounded-xl bg-white/10 border border-white/10 font-bold hover:bg-white/20 transition-all">Choisir Basic</button>
             </div>
-            <div class="bg-brand rounded-3xl p-10 flex flex-col shadow-2xl shadow-brand/20 relative md:-translate-y-4">
-                <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-white text-brand px-4 py-1 rounded-full text-[10px] font-black tracking-widest">TOP VENTES</div>
-                <h3 class="text-2xl font-bold mb-4 uppercase tracking-widest">Prime</h3>
-                <div class="text-4xl font-black mb-8">75€<span class="text-sm font-normal text-white/70">/an</span></div>
-                <button onclick="selectPlan('75')" class="w-full py-4 rounded-xl bg-white text-brand font-bold hover:scale-105 transition-all shadow-xl">Choisir</button>
+            <div class="card-3d-effect bg-brand rounded-3xl p-8 flex flex-col shadow-2xl relative md:-translate-y-6">
+                <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-white text-brand px-4 py-1 rounded-full text-[10px] font-black uppercase">Populaire</div>
+                <h3 class="text-2xl font-bold mb-4 uppercase">Prime</h3>
+                <div class="text-4xl font-black mb-8">75€</div>
+                <ul class="flex-grow space-y-4 text-white text-sm mb-8">
+                    <li><strong>Contenu :</strong> complet + événements</li>
+                    <li><strong>Stabilité :</strong> renforcée</li>
+                    <li><strong>Qualité :</strong> 4K</li>
+                </ul>
+                <button onclick="selectPlan('75')" class="w-full py-4 rounded-xl bg-white text-brand font-bold hover:scale-105 transition-all shadow-xl animate-pulse-glow">Choisir Prime</button>
             </div>
-            <div class="glass-panel rounded-3xl p-10 flex flex-col border border-white/10">
-                <h3 class="text-2xl font-bold mb-4 uppercase tracking-widest text-purple-400">Ultimate</h3>
-                <div class="text-4xl font-black mb-8">99€<span class="text-sm font-normal text-gray-400">/an</span></div>
-                <button onclick="selectPlan('99')" class="w-full py-4 rounded-xl bg-white/5 border border-purple-500/30 font-bold hover:bg-purple-600/20 transition-all">Choisir</button>
+            <div class="card-3d-effect glass-panel rounded-3xl p-8 flex flex-col border border-purple-500/30">
+                <h3 class="text-2xl font-bold mb-4 uppercase text-purple-400">Ultimate</h3>
+                <div class="text-4xl font-black mb-8">99€</div>
+                <ul class="flex-grow space-y-4 text-gray-300 text-sm mb-8">
+                    <li><strong class="text-white">Contenu :</strong> total + sorties cinéma</li>
+                    <li><strong class="text-white">Stabilité :</strong> ultra solide</li>
+                    <li><strong class="text-white">Qualité :</strong> 4K HDR</li>
+                </ul>
+                <button onclick="selectPlan('99')" class="w-full py-4 rounded-xl bg-purple-600 font-bold hover:bg-purple-700 transition-all">Choisir Ultimate</button>
             </div>
-        </div>
-    </section>
-
-    <!-- CHECKOUT -->
-    <section id="checkout-section" class="py-12 px-4 md:px-12 relative z-20">
-        <div id="step2" class="hidden max-w-4xl mx-auto glass-panel p-8 md:p-12 rounded-[2rem] border-t border-white/10 shadow-2xl animate-fade-in-up">
-            <h2 class="text-3xl font-bold text-center mb-10">Paiement Sécurisé</h2>
-            <div id="total_display" class="text-center text-6xl font-black mb-10 text-brand">0 €</div>
-            <div id="paypal-button-container" class="max-w-sm mx-auto"></div>
-        </div>
-        <div id="successMessage" class="hidden max-w-2xl mx-auto bg-green-500/20 border border-green-500/50 p-8 rounded-2xl text-center">
-            <h3 class="text-xl font-bold mb-2">Succès !</h3>
-            <p>Votre abonnement sera activé sous peu.</p>
         </div>
     </section>
 
     <!-- FAQ -->
-    <section id="faq" class="py-24 px-4 md:px-12">
-        <div class="max-w-3xl mx-auto space-y-4">
-            <h2 class="text-3xl font-bold text-center mb-12 uppercase tracking-widest">FAQ</h2>
-            <div class="faq-item glass-panel rounded-2xl cursor-pointer" onclick="toggleFaq(this)">
-                <div class="p-6 flex justify-between items-center font-bold">
-                    Comment ça marche ?
-                    <span class="text-brand">+</span>
+    <section id="faq" class="py-16 px-4 md:px-12 relative z-20">
+        <div class="max-w-3xl mx-auto">
+            <h2 class="text-3xl font-bold mb-10 text-center uppercase tracking-widest">Questions</h2>
+            <div class="space-y-4">
+                <div class="faq-item glass-panel rounded-2xl cursor-pointer" onclick="toggleFaq(this)">
+                    <div class="p-6 flex justify-between items-center font-bold">Comment vais-je recevoir mon abonnement ? <span class="faq-icon text-brand">+</span></div>
+                    <div class="faq-answer text-gray-400">Dès confirmation, vous recevez vos accès par email immédiatement.</div>
                 </div>
-                <div class="faq-answer text-gray-400">Abonnez-vous, recevez vos codes par email et profitez de Popcorn TV sur tous vos écrans.</div>
+                <div class="faq-item glass-panel rounded-2xl cursor-pointer" onclick="toggleFaq(this)">
+                    <div class="p-6 flex justify-between items-center font-bold">Est-ce compatible Smart TV ? <span class="faq-icon text-brand">+</span></div>
+                    <div class="faq-answer text-gray-400">Oui, compatible Smart TV, Android, iOS, Firestick et PC.</div>
+                </div>
             </div>
         </div>
     </section>
 
-    <footer class="py-12 px-4 border-t border-white/5 text-center text-gray-600 text-sm">
-        <p>&copy; 2024 Popcorn TV. Pour usage personnel uniquement.</p>
+    <!-- Paiement Complet -->
+    <section id="contact" class="py-12 px-4 md:px-12 relative z-20">
+        <div class="max-w-4xl mx-auto glass-panel p-8 md:p-12 rounded-[2rem] border-t border-white/10 shadow-2xl">
+            <h2 class="text-3xl font-bold text-center mb-10">Finaliser ma commande</h2>
+            
+            <div id="successMessage" class="hidden bg-green-500/20 border border-green-500/50 p-8 rounded-2xl text-center animate-fade-in-up">
+                <div class="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">✓</div>
+                <h3 class="text-xl font-bold mb-2">Paiement validé !</h3>
+                <p class="text-gray-400">Merci pour votre confiance.</p>
+            </div>
+
+            <form id="checkoutForm" class="space-y-12">
+                <div id="step1" class="space-y-6">
+                    <p class="text-xs font-black uppercase tracking-widest text-brand">Étape 1 : Votre Plan</p>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <label class="cursor-pointer">
+                            <input type="radio" name="plan" id="plan_50" value="50" class="sr-only peer">
+                            <div class="p-6 rounded-2xl border border-white/10 bg-white/5 text-center peer-checked:border-brand peer-checked:bg-brand/10"><span class="block font-black text-xl">50 €</span></div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="plan" id="plan_75" value="75" class="sr-only peer">
+                            <div class="p-6 rounded-2xl border border-white/10 bg-white/5 text-center peer-checked:border-brand peer-checked:bg-brand/10"><span class="block font-black text-xl">75 €</span></div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="plan" id="plan_99" value="99" class="sr-only peer">
+                            <div class="p-6 rounded-2xl border border-white/10 bg-white/5 text-center peer-checked:border-purple-500 peer-checked:bg-purple-500/10"><span class="block font-black text-xl">99 €</span></div>
+                        </label>
+                    </div>
+                </div>
+
+                <div id="step2" class="hidden animate-fade-in-up space-y-6 pt-6 border-t border-white/5">
+                    <p class="text-xs font-black uppercase tracking-widest text-brand">Étape 2 : Mode de réception</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <label class="cursor-pointer">
+                            <input type="radio" name="delivery" id="delivery_online" value="online" class="sr-only peer">
+                            <div class="p-6 rounded-2xl border border-white/10 bg-white/5 text-center peer-checked:border-brand peer-checked:bg-brand/10"><span class="block font-black text-xl">Accès en Ligne</span></div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="delivery" id="delivery_physical" value="physical" class="sr-only peer">
+                            <div class="p-6 rounded-2xl border border-white/10 bg-white/5 text-center peer-checked:border-brand peer-checked:bg-brand/10"><span class="block font-black text-xl">Disque Dur Physique</span></div>
+                        </label>
+                    </div>
+                </div>
+
+                <div id="step3" class="hidden animate-fade-in-up space-y-8 pt-6 border-t border-white/5">
+                    <p class="text-xs font-black uppercase tracking-widest text-brand">Étape 3 : Vos coordonnées</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <input type="text" id="name" placeholder="Prénom & Nom" required class="bg-white/5 border border-white/10 p-4 rounded-xl focus:outline-none focus:border-brand">
+                        <input type="email" id="email" placeholder="Adresse Email" required class="bg-white/5 border border-white/10 p-4 rounded-xl focus:outline-none focus:border-brand">
+                    </div>
+                    <div id="online_fields" class="hidden animate-fade-in-up">
+                        <input type="email" id="email_confirm" placeholder="Confirmez votre Email" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl focus:outline-none focus:border-brand">
+                    </div>
+                    <div id="physical_fields" class="hidden animate-fade-in-up space-y-4">
+                        <input type="text" id="address" placeholder="Adresse postale complète" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl focus:outline-none focus:border-brand">
+                        <div class="grid grid-cols-2 gap-4">
+                            <input type="text" id="zipcode" placeholder="Code Postal" class="bg-white/5 border border-white/10 p-4 rounded-xl focus:outline-none focus:border-brand">
+                            <input type="text" id="city" placeholder="Ville" class="bg-white/5 border border-white/10 p-4 rounded-xl focus:outline-none focus:border-brand">
+                        </div>
+                    </div>
+                    <button type="button" id="btn-validate-step3" class="w-full bg-white/5 border border-white/10 py-4 rounded-xl font-bold hover:bg-white/10 transition-all">Valider mes informations</button>
+                </div>
+
+                <div id="step4" class="hidden animate-fade-in-up pt-8 border-t border-white/5 flex flex-col items-center">
+                    <div class="text-gray-500 text-sm mb-2 uppercase tracking-widest">Total à régler</div>
+                    <div id="total_display" class="text-6xl font-black mb-10">0 €</div>
+                    <div id="paypal-button-container" class="w-full max-w-sm"></div>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <footer class="py-12 border-t border-white/5 text-center text-gray-600 text-sm">
+        <p>&copy; 2024 Popcorn TV. Tous droits réservés.</p>
     </footer>
 
-    <!-- SNAPCHAT -->
-    <a href="https://www.snapchat.com/add/popcorn.tvv" target="_blank" class="fixed bottom-6 right-6 z-50 bg-[#FFFC00] w-16 h-16 rounded-full flex items-center justify-center snap-highlight hover:scale-110 transition-transform">
-        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 1024 1024" fill="#000000">
-            <path d="M512 85.333c-157.76 0-252.16 99.413-259.947 241.6-4.587 79.573 37.653 141.76 65.28 195.413 13.973 26.987 27.2 52.373 21.653 78.4-3.52 16.32-16.747 27.733-35.307 35.307-39.787 16.107-95.253 25.813-154.24 35.307-47.573 8.32-88.64 16.32-108.907 33.707-19.627 17.6-13.44 46.187-8.32 64.96 4.373 22.4 13.547 46.933 21.973 68.693 6.933 17.707 13.12 33.707 7.787 46.827-4.16 10.347-13.333 16.533-24.96 17.92-23.787 2.453-48.747 4.8-74.667 7.253-15.68 1.493-27.52 5.013-33.813 10.027-14.72 11.84-21.76 29.547-21.76 54.4 0 25.813 21.013 41.707 55.467 46.08 52.693 6.4 117.653 14.187 174.4 21.12 49.387 6.08 96.64 11.947 122.027 17.28 47.787 10.133 65.387 39.573 80.107 63.68 12.8 21.333 24.747 41.6 62.4 41.6 13.867 0 29.013-2.667 45.44-5.333 17.173-2.773 34.667-5.653 53.013-5.653 18.24 0 35.733 2.88 52.907 5.653 16.32 2.667 31.467 5.333 45.333 5.333 37.653 0 49.6-20.267 62.4-41.6 14.72-24.107 32.32-53.547 80.107-63.68 25.387-5.333 72.64-11.2 122.027-17.28 56.747-6.933 121.707-14.72 174.4-21.12 34.453-4.373 55.467-20.267 55.467-46.08 0-24.853-7.04-42.56-21.76-54.4-6.293-5.013-18.133-8.533-33.813-10.027-25.92-2.453-50.88-4.8-74.667-7.253-11.627-1.387-20.8-7.573-24.96-17.92-5.333-13.12.853-29.12 7.787-46.827 8.427-21.76 17.6-46.293 21.973-68.693 5.12-18.773 11.307-47.36-8.32-64.96-20.267-17.387-61.333-25.387-108.907-33.707-58.987-9.493-114.453-19.2-154.24-35.307-18.56-7.573-31.787-18.987-35.307-35.307-5.547-26.027 7.68-51.413 21.653-78.4 27.627-53.653 69.867-115.84 65.28-195.413C764.16 184.747 669.76 85.333 512 85.333z"/>
+    <!-- Snapchat Button Official -->
+    <a href="https://www.snapchat.com/add/popcorn.tvv" target="_blank" class="fixed bottom-6 right-6 z-[100] bg-[#FFFC00] w-16 h-16 rounded-full flex items-center justify-center border-2 border-black shadow-2xl hover:scale-110 transition-transform snap-btn-shine">
+        <svg viewBox="0 0 512 512" class="w-10 h-10" fill="white" stroke="black" stroke-width="22">
+            <path d="M256,48C154.39,48,72,126.39,72,223.11c0,29.35,8.12,56.76,22.2,80.12a20.89,20.89,0,0,1,2.94,10.66c0,11.23-7.55,18.84-18,22.79-25.13,9.45-66.23,17.2-105,25.63-22.12,4.82-27.18,20.73-24.16,33,10.23,41.48,27.15,92.51,46,128,6.86,12.92,15.71,21,27,21,12.42,0,18.3-5.59,23.36-12.75,10-14.18,20.08-34,22.84-63.56a20.82,20.82,0,0,1,2.5-9.15c6.23-11.45,18.3-17.7,33-21.57,26.41-7,62.83-11.39,101.44-15,31.41-2.92,57-5,69.58-15,22.56-17.91,14.63-48.47-8.15-68.52-16.14-14.22-48-21-87-28-44.57-8-89.87-16.16-118.82-31-15.54-8-25.19-19.46-27.42-32.55-3.32-19.53,5.22-40.42,24.16-59.2,21.55-21.36,54.78-48.65,51.81-112.56C306.94,116.89,240.23,48,256,48Z"/>
         </svg>
     </a>
 
     <script>
-        // Effets visuels
+        // Gestion des particules
         window.addEventListener('load', () => {
             const container = document.getElementById('particle-container');
-            const icons = ['🍿', '🎬', '🎥', '✨'];
-            for (let i = 0; i < 40; i++) {
-                const p = document.createElement('div');
-                p.className = 'particle';
+            const icons = ['🍿', '🍿', '🎬', '✨'];
+            for (let i = 0; i < 45; i++) {
+                const p = document.createElement('div'); p.className = 'particle';
                 p.innerText = icons[Math.floor(Math.random() * icons.length)];
-                p.style.left = Math.random() * 100 + '%';
-                p.style.fontSize = Math.random() * 20 + 10 + 'px';
-                p.style.animationDuration = Math.random() * 10 + 15 + 's';
-                p.style.animationDelay = Math.random() * 10 + 's';
+                p.style.left = Math.random() * 100 + '%'; p.style.fontSize = Math.random() * 25 + 10 + 'px';
+                p.style.animationDuration = Math.random() * 10 + 10 + 's'; p.style.animationDelay = Math.random() * 20 + 's';
                 container.appendChild(p);
             }
         });
 
+        // Navigation Robuste
+        const navbar = document.getElementById('navbar');
+        const mobileMenu = document.getElementById('mobileMenu');
+        
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('href');
+                const targetSection = document.querySelector(targetId);
+                
+                if (targetSection) {
+                    mobileMenu.classList.add('hidden'); // Fermer le menu mobile au clic
+                    const offset = navbar.offsetHeight;
+                    const bodyRect = document.body.getBoundingClientRect().top;
+                    const elementRect = targetSection.getBoundingClientRect().top;
+                    const elementPosition = elementRect - bodyRect;
+                    const offsetPosition = elementPosition - offset;
+
+                    window.scrollTo({
+                        top: offsetPosition,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
         window.addEventListener('scroll', () => {
-            const nav = document.getElementById('navbar');
-            if (window.scrollY > 50) nav.classList.add('header-scrolled');
-            else nav.classList.remove('header-scrolled');
+            if (window.scrollY > 50) navbar.classList.add('header-scrolled');
+            else navbar.classList.remove('header-scrolled');
         });
 
-        const row1 = document.getElementById('row1');
-        document.getElementById('scroll-left').addEventListener('click', () => row1.scrollBy({ left: -300, behavior: 'smooth' }));
-        document.getElementById('scroll-right').addEventListener('click', () => row1.scrollBy({ left: 300, behavior: 'smooth' }));
+        document.getElementById('mobileMenuBtn').addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
 
-        function toggleFaq(el) { el.classList.toggle('active'); }
-
-        function selectPlan(val) {
-            document.getElementById('total_display').innerText = val + " €";
-            const step = document.getElementById('step2');
-            step.classList.remove('hidden');
-            step.scrollIntoView({ behavior: 'smooth' });
-        }
-
-        const paypalBtn = document.getElementById('paypal-button-container');
-        paypalBtn.innerHTML = `<button class="w-full bg-[#FFC439] py-4 rounded-xl font-bold text-[#003087]">Payer via PayPal</button>`;
-        paypalBtn.addEventListener('click', () => {
-            document.getElementById('step2').classList.add('hidden');
-            document.getElementById('successMessage').classList.remove('hidden');
-        });
-
-        document.getElementById('mobileMenuBtn').addEventListener('click', () => {
-            document.getElementById('mobileMenu').classList.toggle('hidden');
-        });
-
-        // LOGIQUE POPCORN AI AVEC BACKOFF EXPONENTIEL
+        // Popcorn AI
         const aiForm = document.getElementById('ai-form');
         const aiInput = document.getElementById('ai-input');
-        const aiLoading = document.getElementById('ai-loading');
         const aiResults = document.getElementById('ai-results');
-        const aiError = document.getElementById('ai-error');
-
-        async function fetchWithBackoff(url, options, maxRetries = 5) {
-            let delay = 1000;
-            for (let i = 0; i < maxRetries; i++) {
-                try {
-                    const response = await fetch(url, options);
-                    if (response.ok) return response;
-                    if (response.status !== 429 && response.status < 500) break;
-                } catch (e) {}
-                await new Promise(res => setTimeout(res, delay));
-                delay *= 2;
-            }
-            throw new Error('Échec après plusieurs tentatives');
-        }
-
-        async function fetchPopcornAI(query) {
-            // NOTE: Pour Vercel, remplacez "GEMINI_API_KEY" par votre valeur réelle (ex: "AIza...")
-            const apiKey = "GEMINI_API_KEY"; 
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
-            
-            const systemPrompt = "Tu es 'Popcorn AI'. Recommande 3 films/séries en JSON uniquement: [{ 'titre': 'Nom', 'annee': 'Date', 'synopsis': 'Résumé court', 'emoji': 'Emoji' }].";
-
-            const options = {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    contents: [{ parts: [{ text: query }] }],
-                    systemInstruction: { parts: [{ text: systemPrompt }] },
-                    generationConfig: { responseMimeType: "application/json" }
-                })
-            };
-
-            const response = await fetchWithBackoff(url, options);
-            const data = await response.json();
-            return JSON.parse(data.candidates[0].content.parts[0].text);
-        }
 
         aiForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const q = aiInput.value.trim();
-            if(!q) return;
-
-            aiLoading.classList.remove('hidden');
+            const queryText = aiInput.value.trim();
+            document.getElementById('ai-loading').classList.remove('hidden');
             aiResults.classList.add('hidden');
-            aiError.classList.add('hidden');
-
+            document.getElementById('ai-error').classList.add('hidden');
             try {
-                const data = await fetchPopcornAI(q);
+                const res = await fetch('/api/gemini', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query: queryText }) });
+                if (!res.ok) throw new Error();
+                const data = await res.json();
                 aiResults.innerHTML = '';
                 data.forEach(m => {
                     const card = document.createElement('div');
-                    card.className = 'bg-white/5 p-6 rounded-2xl border border-white/10 hover:border-brand/50 transition-all';
-                    card.innerHTML = `<div class="text-4xl mb-4">${m.emoji}</div><h4 class="font-bold text-lg">${m.titre}</h4><p class="text-[10px] text-brand font-black mb-2">${m.annee}</p><p class="text-xs text-gray-500">${m.synopsis}</p>`;
+                    card.className = 'bg-white/[0.03] p-8 rounded-[2rem] border border-white/10 hover:border-brand/50 transition-all shadow-xl backdrop-blur-md group';
+                    card.innerHTML = `<div class="text-5xl mb-6 group-hover:scale-110 transition-transform duration-300">${m.emoji}</div><h4 class="font-black text-xl text-white mb-1">${m.titre}</h4><p class="text-[11px] text-brand font-black mb-4 uppercase tracking-widest">${m.annee}</p><p class="text-sm text-gray-400 font-light leading-relaxed">${m.synopsis}</p>`;
                     aiResults.appendChild(card);
                 });
-                aiResults.classList.remove('hidden');
-                aiResults.classList.add('grid');
-            } catch (err) {
-                aiError.classList.remove('hidden');
-            } finally {
-                aiLoading.classList.add('hidden');
+                aiResults.classList.remove('hidden'); aiResults.classList.add('grid');
+            } catch (err) { document.getElementById('ai-error').classList.remove('hidden'); }
+            finally { document.getElementById('ai-loading').classList.add('hidden'); }
+        });
+
+        // Formulaire Multi-étapes
+        const step2 = document.getElementById('step2');
+        const step3 = document.getElementById('step3');
+        const step4 = document.getElementById('step4');
+        const totalDisplay = document.getElementById('total_display');
+
+        function selectPlan(val) {
+            document.getElementById('plan_' + val).checked = true;
+            totalDisplay.innerText = val + " €";
+            step2.classList.remove('hidden');
+            step2.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        document.querySelectorAll('input[name="plan"]').forEach(radio => {
+            radio.addEventListener('change', () => { totalDisplay.innerText = radio.value + " €"; step2.classList.remove('hidden'); });
+        });
+
+        document.querySelectorAll('input[name="delivery"]').forEach(radio => {
+            radio.addEventListener('change', () => {
+                step3.classList.remove('hidden');
+                if(radio.value === 'online') {
+                    document.getElementById('online_fields').classList.remove('hidden');
+                    document.getElementById('physical_fields').classList.add('hidden');
+                } else {
+                    document.getElementById('online_fields').classList.add('hidden');
+                    document.getElementById('physical_fields').classList.remove('hidden');
+                }
+            });
+        });
+
+        document.getElementById('btn-validate-step3').addEventListener('click', () => {
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            if(name && email) {
+                step4.classList.remove('hidden');
+                step4.scrollIntoView({ behavior: 'smooth' });
             }
         });
+
+        const paypalBtn = document.getElementById('paypal-button-container');
+        paypalBtn.innerHTML = `<button type="button" class="w-full bg-[#FFC439] py-4 rounded-xl font-bold text-[#003087]">Payer avec PayPal</button>`;
+        paypalBtn.addEventListener('click', () => { 
+            document.getElementById('checkoutForm').classList.add('hidden'); 
+            document.getElementById('successMessage').classList.remove('hidden');
+            document.getElementById('contact').scrollIntoView({ behavior: 'smooth' });
+        });
+
+        function toggleFaq(el) { el.classList.toggle('active'); }
+        document.getElementById('scroll-left').addEventListener('click', () => document.getElementById('row1').scrollBy({ left: -300, behavior: 'smooth' }));
+        document.getElementById('scroll-right').addEventListener('click', () => document.getElementById('row1').scrollBy({ left: 300, behavior: 'smooth' }));
     </script>
 </body>
 </html>
