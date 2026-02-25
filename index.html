@@ -63,7 +63,6 @@
             animation: pulse-glow 2.5s infinite;
         }
 
-        /* Surbrillance Snapchat */
         @keyframes snap-highlight-glow {
             0%, 100% { box-shadow: 0 0 15px rgba(255, 252, 0, 0.5); transform: scale(1); }
             50% { box-shadow: 0 0 35px rgba(255, 252, 0, 0.9); transform: scale(1.1); }
@@ -72,7 +71,6 @@
             animation: snap-highlight-glow 2s ease-in-out infinite;
         }
 
-        /* Particules mobiles en fond - Animation fluide */
         @keyframes drift {
             from { transform: translateY(100vh) translateX(0) rotate(0deg); opacity: 0; }
             10% { opacity: 0.3; }
@@ -87,7 +85,6 @@
             opacity: 0;
         }
 
-        /* Le conteneur commence après le Hero pour ne pas bloquer d'images en haut */
         #particle-container {
             position: absolute;
             top: 85vh; 
@@ -97,12 +94,6 @@
             z-index: -1;
             overflow: hidden;
             pointer-events: none;
-        }
-
-        .card-3d-effect {
-            transition: transform 0.1s ease-out, box-shadow 0.1s ease-out;
-            transform-style: preserve-3d;
-            will-change: transform;
         }
 
         @keyframes fadeInUp {
@@ -157,16 +148,14 @@
 </head>
 <body class="bg-[#050505] text-white font-sans antialiased overflow-x-hidden relative selection:bg-brand selection:text-white">
 
-    <!-- FOND AMBIANT STATIQUE -->
+    <!-- FOND AMBIANT -->
     <div class="fixed inset-0 z-[-2] overflow-hidden pointer-events-none">
         <div class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-brand/10 rounded-full mix-blend-screen filter blur-[120px] animate-float"></div>
         <div class="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-purple-900/10 rounded-full mix-blend-screen filter blur-[150px] animate-float" style="animation-delay: 2s;"></div>
     </div>
 
-    <!-- CONTENEUR DES PARTICULES (POPCORN) -->
     <div id="particle-container"></div>
 
-    <!-- Navigation -->
     <header id="navbar" class="fixed w-full top-0 z-50 transition-all duration-300 px-4 md:px-12 py-4">
         <div class="flex items-center justify-between">
             <div class="flex items-center gap-8">
@@ -175,7 +164,7 @@
                 </a>
                 <nav class="hidden md:flex gap-6 text-sm text-gray-300 font-medium">
                     <a href="#accueil" class="hover:text-white transition-colors">Accueil</a>
-                    <a href="#concept" class="hover:text-white transition-colors">Le Concept</a>
+                    <a href="#ia-reco" class="hover:text-white transition-colors">Popcorn AI</a>
                     <a href="#offres" class="hover:text-white transition-colors">Nos Offres</a>
                     <a href="#faq" class="hover:text-white transition-colors">FAQ</a>
                 </nav>
@@ -191,13 +180,12 @@
         </div>
         <div id="mobileMenu" class="md:hidden hidden bg-black/95 backdrop-blur-xl absolute top-full left-0 w-full border-t border-white/10 flex flex-col items-center py-6 gap-6 shadow-2xl">
             <a href="#accueil" class="mobile-link text-lg font-medium hover:text-brand transition-colors">Accueil</a>
-            <a href="#concept" class="mobile-link text-lg font-medium hover:text-brand transition-colors">Le Concept</a>
+            <a href="#ia-reco" class="mobile-link text-lg font-medium hover:text-brand transition-colors">Popcorn AI</a>
             <a href="#offres" class="mobile-link text-lg font-medium hover:text-brand transition-colors">Nos Offres</a>
             <a href="#faq" class="mobile-link text-lg font-medium hover:text-brand transition-colors">FAQ</a>
         </div>
     </header>
 
-    <!-- Section Hero (Accueil) -->
     <section id="accueil" class="relative h-[85vh] w-full flex items-center justify-start px-4 md:px-12 overflow-hidden">
         <div class="absolute inset-0 w-full h-full z-0">
             <img src="https://images.unsplash.com/photo-1593784991095-a205069470b6?q=80&w=2070&auto=format&fit=crop" alt="Cinéma maison" class="w-full h-full object-cover opacity-30 mix-blend-overlay">
@@ -215,22 +203,21 @@
             
             <div class="flex flex-col sm:flex-row gap-4 mt-8">
                 <a href="#offres" class="flex items-center justify-center gap-2 bg-white text-black hover:bg-gray-200 px-8 py-4 rounded-full font-bold text-lg transition-all shadow-[0_0_20px_rgba(255,255,255,0.2)]">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
                     Voir nos offres IPTV
                 </a>
-                <a href="#concept" class="flex items-center justify-center gap-2 glass-panel hover:bg-white/10 px-8 py-4 rounded-full font-bold text-lg transition-colors text-white">
-                    Comment ça marche ?
+                <a href="#ia-reco" class="flex items-center justify-center gap-2 glass-panel hover:bg-white/10 px-8 py-4 rounded-full font-bold text-lg transition-colors text-white">
+                    Essayer l'IA
                 </a>
             </div>
         </div>
     </section>
 
-    <!-- Section Popcorn AI -->
+    <!-- POPCORN AI -->
     <section id="ia-reco" class="py-24 px-4 md:px-12 relative z-20">
         <div class="max-w-5xl mx-auto">
             <div class="text-center mb-12">
                 <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gradient-to-r from-brand to-purple-600 text-[10px] font-black tracking-widest uppercase mb-4 shadow-lg shadow-brand/20">
-                    Nouveau : Popcorn AI
+                    Propulsé par Popcorn AI
                 </div>
                 <h2 class="text-4xl md:text-6xl font-black mb-4 text-white">Votre assistant cinéma.</h2>
                 <p class="text-gray-400 text-lg font-light max-w-2xl mx-auto">Décrivez votre humeur, et notre IA scanne des milliers de films pour vous proposer la soirée parfaite.</p>
@@ -241,13 +228,13 @@
                     <form id="ai-form" class="relative z-10">
                         <div class="flex flex-col md:flex-row gap-4 items-center">
                             <div class="relative w-full">
-                                <input type="text" id="ai-input" required class="w-full bg-white/5 border border-white/10 rounded-2xl p-5 text-white text-lg focus:outline-none focus:border-brand transition-all placeholder-gray-600" placeholder="Ex: Un thriller psychologique sombre et pluvieux...">
+                                <input type="text" id="ai-input" required class="w-full bg-white/5 border border-white/10 rounded-2xl p-5 text-white text-lg focus:outline-none focus:border-brand transition-all placeholder-gray-600" placeholder="Ex: Un film d'action des années 90 dans l'espace...">
                                 <div class="absolute right-4 top-1/2 -translate-y-1/2 text-brand/50">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
                                 </div>
                             </div>
                             <button type="submit" id="ai-btn" class="w-full md:w-auto bg-brand hover:bg-brand-dark text-white px-10 py-5 rounded-2xl font-black text-lg transition-all shadow-xl hover:scale-105 whitespace-nowrap">
-                                Demander à Popcorn AI
+                                Analyser
                             </button>
                         </div>
                     </form>
@@ -257,24 +244,22 @@
                             <div class="absolute inset-0 border-4 border-brand/20 rounded-full"></div>
                             <div class="absolute inset-0 border-4 border-brand rounded-full border-t-transparent animate-spin"></div>
                         </div>
-                        <p class="text-brand font-bold mt-6 tracking-widest animate-pulse uppercase text-xs">Popcorn AI réfléchit...</p>
+                        <p class="text-brand font-bold mt-6 tracking-widest animate-pulse uppercase text-xs">Popcorn AI prépare le popcorn...</p>
                     </div>
 
-                    <div id="ai-results" class="hidden grid-cols-1 md:grid-cols-3 gap-6 mt-12 pt-12 border-t border-white/5">
-                        <!-- Résultats dynamiques -->
-                    </div>
+                    <div id="ai-results" class="hidden grid-cols-1 md:grid-cols-3 gap-6 mt-12 pt-12 border-t border-white/5"></div>
                     
                     <div id="ai-error" class="hidden text-brand text-center mt-6 p-4 bg-brand/10 border border-brand/30 rounded-xl">
-                        Erreur de connexion avec Popcorn AI. Veuillez réessayer.
+                        Popcorn AI rencontre un souci. Vérifiez votre clé API et réessayez.
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Section Catalogue -->
+    <!-- CATALOGUE -->
     <section class="py-12 relative z-20">
-        <h2 class="text-2xl md:text-3xl font-bold mb-8 px-4 md:px-12 text-white">Les plus gros succès</h2>
+        <h2 class="text-2xl md:text-3xl font-bold mb-8 px-4 md:px-12 text-white">Populaires sur Popcorn TV</h2>
         <div class="relative group px-4 md:px-12">
             <button id="scroll-left" class="absolute left-6 top-1/2 -translate-y-1/2 z-30 bg-black/80 text-white p-3 rounded-full opacity-0 group-hover:opacity-100 transition-all border border-white/10 shadow-2xl">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
@@ -300,224 +285,146 @@
         </div>
     </section>
 
-    <!-- Nos Offres -->
+    <!-- OFFRES -->
     <section id="offres" class="py-24 px-4 md:px-12 relative z-20">
         <div class="text-center mb-16">
-            <h2 class="text-3xl md:text-5xl font-black mb-4">Abonnements IPTV</h2>
-            <p class="text-gray-400">Sans engagement. Qualité 4K garantie.</p>
+            <h2 class="text-3xl md:text-5xl font-black mb-4">Plans Disponibles</h2>
+            <p class="text-gray-400">Qualité premium, accès instantané.</p>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            <!-- BASIC -->
-            <div class="glass-panel rounded-3xl p-10 flex flex-col border border-white/10 hover:border-brand/30 transition-all">
+            <div class="glass-panel rounded-3xl p-10 flex flex-col border border-white/10">
                 <h3 class="text-2xl font-bold mb-4 uppercase tracking-widest">Basic</h3>
                 <div class="text-4xl font-black mb-8">50€<span class="text-sm font-normal text-gray-400">/an</span></div>
-                <ul class="flex-grow space-y-4 text-gray-400 text-sm mb-10">
-                    <li class="flex items-center gap-2 font-bold text-white"><span class="text-brand">✓</span> Accès illimité</li>
-                    <li class="flex items-center gap-2"><span class="text-brand">✓</span> Qualité HD</li>
-                    <li class="flex items-center gap-2"><span class="text-brand">✓</span> Support 7j/7</li>
-                </ul>
-                <button onclick="selectPlan('50')" class="w-full py-4 rounded-xl bg-white/5 border border-white/10 font-bold hover:bg-white/10 transition-all">Choisir Basic</button>
+                <button onclick="selectPlan('50')" class="w-full py-4 rounded-xl bg-white/5 border border-white/10 font-bold hover:bg-white/10 transition-all">Choisir</button>
             </div>
-            <!-- PRIME -->
             <div class="bg-brand rounded-3xl p-10 flex flex-col shadow-2xl shadow-brand/20 relative md:-translate-y-4">
-                <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-white text-brand px-4 py-1 rounded-full text-[10px] font-black tracking-widest">PLUS POPULAIRE</div>
+                <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-white text-brand px-4 py-1 rounded-full text-[10px] font-black tracking-widest">TOP VENTES</div>
                 <h3 class="text-2xl font-bold mb-4 uppercase tracking-widest">Prime</h3>
                 <div class="text-4xl font-black mb-8">75€<span class="text-sm font-normal text-white/70">/an</span></div>
-                <ul class="flex-grow space-y-4 text-white/80 text-sm mb-10">
-                    <li class="flex items-center gap-2 font-bold text-white"><span>✓</span> Catalogue Premium</li>
-                    <li class="flex items-center gap-2 font-bold text-white"><span>✓</span> Qualité 4K Ultra HD</li>
-                    <li class="flex items-center gap-2 font-bold text-white"><span>✓</span> Stabilité Renforcée</li>
-                </ul>
-                <button onclick="selectPlan('75')" class="w-full py-4 rounded-xl bg-white text-brand font-bold hover:scale-105 transition-all shadow-xl">Choisir Prime</button>
+                <button onclick="selectPlan('75')" class="w-full py-4 rounded-xl bg-white text-brand font-bold hover:scale-105 transition-all shadow-xl">Choisir</button>
             </div>
-            <!-- ULTIMATE -->
-            <div class="glass-panel rounded-3xl p-10 flex flex-col border border-white/10 hover:border-purple-500/30 transition-all">
+            <div class="glass-panel rounded-3xl p-10 flex flex-col border border-white/10">
                 <h3 class="text-2xl font-bold mb-4 uppercase tracking-widest text-purple-400">Ultimate</h3>
                 <div class="text-4xl font-black mb-8">99€<span class="text-sm font-normal text-gray-400">/an</span></div>
-                <ul class="flex-grow space-y-4 text-gray-400 text-sm mb-10">
-                    <li class="flex items-center gap-2 font-bold text-white"><span class="text-purple-400">✓</span> Tout le catalogue</li>
-                    <li class="flex items-center gap-2 font-bold text-white"><span class="text-purple-400">✓</span> Serveurs Dédiés</li>
-                    <li class="flex items-center gap-2 font-bold text-white"><span class="text-purple-400">✓</span> Support Prioritaire</li>
-                </ul>
-                <button onclick="selectPlan('99')" class="w-full py-4 rounded-xl bg-white/5 border border-purple-500/30 font-bold hover:bg-purple-600/20 transition-all">Choisir Ultimate</button>
+                <button onclick="selectPlan('99')" class="w-full py-4 rounded-xl bg-white/5 border border-purple-500/30 font-bold hover:bg-purple-600/20 transition-all">Choisir</button>
             </div>
         </div>
     </section>
 
-    <!-- Formulaire Paiement -->
-    <section id="contact" class="py-12 px-4 md:px-12 relative z-20">
-        <div class="max-w-4xl mx-auto glass-panel p-8 md:p-12 rounded-[2rem] border-t border-white/10 shadow-2xl">
-            <h2 class="text-3xl font-bold text-center mb-10">Finaliser ma commande</h2>
-            
-            <div id="successMessage" class="hidden bg-green-500/20 border border-green-500/50 p-8 rounded-2xl text-center animate-fade-in-up">
-                <div class="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">✓</div>
-                <h3 class="text-xl font-bold mb-2">Paiement validé !</h3>
-                <p class="text-gray-400">Vérifiez vos emails dans quelques instants.</p>
-            </div>
-
-            <form id="checkoutForm" class="space-y-12">
-                <div id="step1" class="space-y-6">
-                    <p class="text-xs font-black uppercase tracking-widest text-brand">Étape 1 : Abonnement</p>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <label class="cursor-pointer">
-                            <input type="radio" name="plan" id="plan_50" value="50" class="sr-only peer">
-                            <div class="p-6 rounded-2xl border border-white/10 bg-white/5 text-center transition-all peer-checked:border-brand peer-checked:bg-brand/10">
-                                <span class="block font-black text-xl">50 €</span>
-                                <span class="text-[10px] text-gray-500">BASIC</span>
-                            </div>
-                        </label>
-                        <label class="cursor-pointer">
-                            <input type="radio" name="plan" id="plan_75" value="75" class="sr-only peer">
-                            <div class="p-6 rounded-2xl border border-white/10 bg-white/5 text-center transition-all peer-checked:border-brand peer-checked:bg-brand/10">
-                                <span class="block font-black text-xl">75 €</span>
-                                <span class="text-[10px] text-gray-500 uppercase">Prime</span>
-                            </div>
-                        </label>
-                        <label class="cursor-pointer">
-                            <input type="radio" name="plan" id="plan_99" value="99" class="sr-only peer">
-                            <div class="p-6 rounded-2xl border border-white/10 bg-white/5 text-center transition-all peer-checked:border-purple-500 peer-checked:bg-purple-500/10">
-                                <span class="block font-black text-xl">99 €</span>
-                                <span class="text-[10px] text-gray-500">ULTIMATE</span>
-                            </div>
-                        </label>
-                    </div>
-                </div>
-
-                <div id="step2" class="hidden animate-fade-in-up space-y-8">
-                    <p class="text-xs font-black uppercase tracking-widest text-brand">Étape 2 : Vos infos</p>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <input type="text" id="name" placeholder="Nom Complet" required class="bg-white/5 border border-white/10 p-4 rounded-xl focus:outline-none focus:border-brand">
-                        <input type="email" id="email" placeholder="Email" required class="bg-white/5 border border-white/10 p-4 rounded-xl focus:outline-none focus:border-brand">
-                    </div>
-                    
-                    <div id="step4" class="pt-8 border-t border-white/5 flex flex-col items-center">
-                        <div class="text-gray-500 text-sm mb-2">Total à régler</div>
-                        <div id="total_display" class="text-6xl font-black mb-10">0 €</div>
-                        <div id="paypal-button-container" class="w-full max-w-sm"></div>
-                    </div>
-                </div>
-            </form>
+    <!-- CHECKOUT -->
+    <section id="checkout-section" class="py-12 px-4 md:px-12 relative z-20">
+        <div id="step2" class="hidden max-w-4xl mx-auto glass-panel p-8 md:p-12 rounded-[2rem] border-t border-white/10 shadow-2xl animate-fade-in-up">
+            <h2 class="text-3xl font-bold text-center mb-10">Paiement Sécurisé</h2>
+            <div id="total_display" class="text-center text-6xl font-black mb-10 text-brand">0 €</div>
+            <div id="paypal-button-container" class="max-w-sm mx-auto"></div>
+        </div>
+        <div id="successMessage" class="hidden max-w-2xl mx-auto bg-green-500/20 border border-green-500/50 p-8 rounded-2xl text-center">
+            <h3 class="text-xl font-bold mb-2">Succès !</h3>
+            <p>Votre abonnement sera activé sous peu.</p>
         </div>
     </section>
 
     <!-- FAQ -->
     <section id="faq" class="py-24 px-4 md:px-12">
         <div class="max-w-3xl mx-auto space-y-4">
-            <h2 class="text-3xl font-bold text-center mb-12 uppercase tracking-widest">Questions</h2>
+            <h2 class="text-3xl font-bold text-center mb-12 uppercase tracking-widest">FAQ</h2>
             <div class="faq-item glass-panel rounded-2xl cursor-pointer" onclick="toggleFaq(this)">
                 <div class="p-6 flex justify-between items-center font-bold">
-                    Comment recevoir mes identifiants ?
+                    Comment ça marche ?
                     <span class="text-brand">+</span>
                 </div>
-                <div class="faq-answer text-gray-400">Par email immédiatement après confirmation du paiement.</div>
-            </div>
-            <div class="faq-item glass-panel rounded-2xl cursor-pointer" onclick="toggleFaq(this)">
-                <div class="p-6 flex justify-between items-center font-bold">
-                    Est-ce compatible Smart TV ?
-                    <span class="text-brand">+</span>
-                </div>
-                <div class="faq-answer text-gray-400">Oui, Smart TV, Android, iOS et PC.</div>
+                <div class="faq-answer text-gray-400">Abonnez-vous, recevez vos codes par email et profitez de Popcorn TV sur tous vos écrans.</div>
             </div>
         </div>
     </section>
 
     <footer class="py-12 px-4 border-t border-white/5 text-center text-gray-600 text-sm">
-        <p>&copy; 2024 Popcorn TV. Tous droits réservés.</p>
+        <p>&copy; 2024 Popcorn TV. Pour usage personnel uniquement.</p>
     </footer>
 
-    <!-- BOUTON SNAPCHAT EN SURBRILLANCE -->
-    <a href="https://www.snapchat.com/add/popcorn.tvv" target="_blank" class="fixed bottom-6 right-6 z-50 bg-[#FFFC00] w-16 h-16 rounded-full flex items-center justify-center snap-highlight hover:scale-110 transition-transform animate-fade-in-up" style="animation-delay: 1s;">
-        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 1024 1024" fill="#ffffff" stroke="#000000" stroke-width="40">
+    <!-- SNAPCHAT -->
+    <a href="https://www.snapchat.com/add/popcorn.tvv" target="_blank" class="fixed bottom-6 right-6 z-50 bg-[#FFFC00] w-16 h-16 rounded-full flex items-center justify-center snap-highlight hover:scale-110 transition-transform">
+        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 1024 1024" fill="#000000">
             <path d="M512 85.333c-157.76 0-252.16 99.413-259.947 241.6-4.587 79.573 37.653 141.76 65.28 195.413 13.973 26.987 27.2 52.373 21.653 78.4-3.52 16.32-16.747 27.733-35.307 35.307-39.787 16.107-95.253 25.813-154.24 35.307-47.573 8.32-88.64 16.32-108.907 33.707-19.627 17.6-13.44 46.187-8.32 64.96 4.373 22.4 13.547 46.933 21.973 68.693 6.933 17.707 13.12 33.707 7.787 46.827-4.16 10.347-13.333 16.533-24.96 17.92-23.787 2.453-48.747 4.8-74.667 7.253-15.68 1.493-27.52 5.013-33.813 10.027-14.72 11.84-21.76 29.547-21.76 54.4 0 25.813 21.013 41.707 55.467 46.08 52.693 6.4 117.653 14.187 174.4 21.12 49.387 6.08 96.64 11.947 122.027 17.28 47.787 10.133 65.387 39.573 80.107 63.68 12.8 21.333 24.747 41.6 62.4 41.6 13.867 0 29.013-2.667 45.44-5.333 17.173-2.773 34.667-5.653 53.013-5.653 18.24 0 35.733 2.88 52.907 5.653 16.32 2.667 31.467 5.333 45.333 5.333 37.653 0 49.6-20.267 62.4-41.6 14.72-24.107 32.32-53.547 80.107-63.68 25.387-5.333 72.64-11.2 122.027-17.28 56.747-6.933 121.707-14.72 174.4-21.12 34.453-4.373 55.467-20.267 55.467-46.08 0-24.853-7.04-42.56-21.76-54.4-6.293-5.013-18.133-8.533-33.813-10.027-25.92-2.453-50.88-4.8-74.667-7.253-11.627-1.387-20.8-7.573-24.96-17.92-5.333-13.12.853-29.12 7.787-46.827 8.427-21.76 17.6-46.293 21.973-68.693 5.12-18.773 11.307-47.36-8.32-64.96-20.267-17.387-61.333-25.387-108.907-33.707-58.987-9.493-114.453-19.2-154.24-35.307-18.56-7.573-31.787-18.987-35.307-35.307-5.547-26.027 7.68-51.413 21.653-78.4 27.627-53.653 69.867-115.84 65.28-195.413C764.16 184.747 669.76 85.333 512 85.333z"/>
         </svg>
     </a>
 
     <script>
-        // Création des particules mobiles (Pop-corn) au chargement
+        // Effets visuels
         window.addEventListener('load', () => {
             const container = document.getElementById('particle-container');
-            const icons = ['🍿', '🍿', '🍿', '🍿', '🎬', '🎥', '⭐', '✨'];
-            
-            for (let i = 0; i < 45; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'particle';
-                particle.innerText = icons[Math.floor(Math.random() * icons.length)];
-                
-                // Positionnement aléatoire dans le conteneur
-                particle.style.left = Math.random() * 100 + '%';
-                particle.style.fontSize = Math.random() * 25 + 10 + 'px';
-                particle.style.animationDuration = Math.random() * 10 + 15 + 's';
-                particle.style.animationDelay = Math.random() * 20 + 's';
-                
-                container.appendChild(particle);
+            const icons = ['🍿', '🎬', '🎥', '✨'];
+            for (let i = 0; i < 40; i++) {
+                const p = document.createElement('div');
+                p.className = 'particle';
+                p.innerText = icons[Math.floor(Math.random() * icons.length)];
+                p.style.left = Math.random() * 100 + '%';
+                p.style.fontSize = Math.random() * 20 + 10 + 'px';
+                p.style.animationDuration = Math.random() * 10 + 15 + 's';
+                p.style.animationDelay = Math.random() * 10 + 's';
+                container.appendChild(p);
             }
         });
 
-        // Navbar scroll
         window.addEventListener('scroll', () => {
             const nav = document.getElementById('navbar');
             if (window.scrollY > 50) nav.classList.add('header-scrolled');
             else nav.classList.remove('header-scrolled');
         });
 
-        // Carrousel
         const row1 = document.getElementById('row1');
         document.getElementById('scroll-left').addEventListener('click', () => row1.scrollBy({ left: -300, behavior: 'smooth' }));
         document.getElementById('scroll-right').addEventListener('click', () => row1.scrollBy({ left: 300, behavior: 'smooth' }));
 
-        // FAQ
-        function toggleFaq(el) {
-            el.classList.toggle('active');
-        }
-
-        // Formulaire
-        const step2 = document.getElementById('step2');
-        const totalDisplay = document.getElementById('total_display');
+        function toggleFaq(el) { el.classList.toggle('active'); }
 
         function selectPlan(val) {
-            const radio = document.getElementById('plan_' + val);
-            if (radio) {
-                radio.checked = true;
-                totalDisplay.innerText = val + " €";
-                step2.classList.remove('hidden');
-                step2.scrollIntoView({ behavior: 'smooth' });
-            }
+            document.getElementById('total_display').innerText = val + " €";
+            const step = document.getElementById('step2');
+            step.classList.remove('hidden');
+            step.scrollIntoView({ behavior: 'smooth' });
         }
 
-        document.querySelectorAll('input[name="plan"]').forEach(radio => {
-            radio.addEventListener('change', () => {
-                totalDisplay.innerText = radio.value + " €";
-                step2.classList.remove('hidden');
-            });
-        });
-
-        // Mock PayPal
         const paypalBtn = document.getElementById('paypal-button-container');
-        paypalBtn.innerHTML = `<button type="button" class="w-full bg-[#FFC439] py-4 rounded-xl font-bold text-[#003087]">Payer avec PayPal</button>`;
+        paypalBtn.innerHTML = `<button class="w-full bg-[#FFC439] py-4 rounded-xl font-bold text-[#003087]">Payer via PayPal</button>`;
         paypalBtn.addEventListener('click', () => {
-            document.getElementById('checkoutForm').classList.add('hidden');
+            document.getElementById('step2').classList.add('hidden');
             document.getElementById('successMessage').classList.remove('hidden');
         });
 
-        // Menu Mobile
         document.getElementById('mobileMenuBtn').addEventListener('click', () => {
             document.getElementById('mobileMenu').classList.toggle('hidden');
         });
 
-        // POPCORN AI
+        // LOGIQUE POPCORN AI AVEC BACKOFF EXPONENTIEL
         const aiForm = document.getElementById('ai-form');
         const aiInput = document.getElementById('ai-input');
         const aiLoading = document.getElementById('ai-loading');
         const aiResults = document.getElementById('ai-results');
         const aiError = document.getElementById('ai-error');
 
+        async function fetchWithBackoff(url, options, maxRetries = 5) {
+            let delay = 1000;
+            for (let i = 0; i < maxRetries; i++) {
+                try {
+                    const response = await fetch(url, options);
+                    if (response.ok) return response;
+                    if (response.status !== 429 && response.status < 500) break;
+                } catch (e) {}
+                await new Promise(res => setTimeout(res, delay));
+                delay *= 2;
+            }
+            throw new Error('Échec après plusieurs tentatives');
+        }
+
         async function fetchPopcornAI(query) {
-            const apiKey = ""; 
+            // NOTE: Pour Vercel, remplacez "GEMINI_API_KEY" par votre valeur réelle (ex: "AIza...")
+            const apiKey = "GEMINI_API_KEY"; 
             const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
             
-            const systemPrompt = "Tu es 'Popcorn AI'. L'utilisateur te donne ses envies. Réponds avec exactement 3 films/séries existants au format JSON : [{ 'titre': 'Nom', 'annee': 'Date', 'synopsis': 'Résumé court', 'emoji': 'Emoji' }]. Rien d'autre que le JSON.";
+            const systemPrompt = "Tu es 'Popcorn AI'. Recommande 3 films/séries en JSON uniquement: [{ 'titre': 'Nom', 'annee': 'Date', 'synopsis': 'Résumé court', 'emoji': 'Emoji' }].";
 
-            const response = await fetch(url, {
+            const options = {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -525,8 +432,9 @@
                     systemInstruction: { parts: [{ text: systemPrompt }] },
                     generationConfig: { responseMimeType: "application/json" }
                 })
-            });
-            if (!response.ok) throw new Error();
+            };
+
+            const response = await fetchWithBackoff(url, options);
             const data = await response.json();
             return JSON.parse(data.candidates[0].content.parts[0].text);
         }
@@ -546,12 +454,12 @@
                 data.forEach(m => {
                     const card = document.createElement('div');
                     card.className = 'bg-white/5 p-6 rounded-2xl border border-white/10 hover:border-brand/50 transition-all';
-                    card.innerHTML = `<div class="text-4xl mb-4">${m.emoji}</div><h4 class="font-bold text-lg">${m.titre}</h4><p class="text-[10px] text-brand font-black mb-3">${m.annee}</p><p class="text-xs text-gray-500">${m.synopsis}</p>`;
+                    card.innerHTML = `<div class="text-4xl mb-4">${m.emoji}</div><h4 class="font-bold text-lg">${m.titre}</h4><p class="text-[10px] text-brand font-black mb-2">${m.annee}</p><p class="text-xs text-gray-500">${m.synopsis}</p>`;
                     aiResults.appendChild(card);
                 });
                 aiResults.classList.remove('hidden');
                 aiResults.classList.add('grid');
-            } catch {
+            } catch (err) {
                 aiError.classList.remove('hidden');
             } finally {
                 aiLoading.classList.add('hidden');
