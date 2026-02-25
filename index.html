@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Popcorn TV | Vos films et séries partout</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            DEFAULT: '#E50914', // Rouge type Netflix
+                            dark: '#B81D24',
+                        },
+                    },
+                    fontFamily: {
+                        sans: ['Helvetica Neue', 'Helvetica', 'Arial', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Cacher la barre de défilement pour les rangées de films */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        
+        /* Effet de transition fluide pour le header (Glassmorphism) */
+        .header-scrolled {
+            background-color: rgba(5, 5, 5, 0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Animation de zoom au survol des affiches */
+        .poster-card {
+            transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .poster-card:hover {
+            transform: scale(1.05);
+            z-index: 10;
+        }
+
+        /* Animations pour le fond et effets 3D */
+        @keyframes float {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-30px) scale(1.05); }
+        }
+        .animate-float {
+            animation: float 8s ease-in-out infinite;
+        }
+
+        .card-3d-effect {
+            transition: transform 0.1s ease-out, box-shadow 0.1s ease-out, background-color 0.3s ease;
+            transform-style: preserve-3d;
+            will-change: transform;
+        }
+        .card-3d-effect.reset {
+            transition: transform 0.5s ease-out, box-shadow 0.5s ease-out, background-color 0.3s ease;
+        }
+
+        /* Nouvelle animation pour le formulaire progressif */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in-up {
+            animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        /* Utilitaires Glassmorphism (Verre dépoli) */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+        }
+        .glass-panel:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+        .glass-input {
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-[#050505] text-white font-sans antialiased overflow-x-hidden relative selection:bg-brand selection:text-white">
+
+    <!-- FOND AMBIANT GLOBAL (Orbes lumineuses) -->
+    <div class="fixed inset-0 z-[-1] overflow-hidden pointer-events-none">
+        <div class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-brand/20 rounded-full mix-blend-screen filter blur-[120px] animate-float" style="animation-duration: 12s;"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-purple-900/20 rounded-full mix-blend-screen filter blur-[150px] animate-float" style="animation-duration: 15s; animation-delay: 2s;"></div>
+        <div class="absolute top-[40%] left-[60%] w-[30vw] h-[30vw] bg-blue-900/10 rounded-full mix-blend-screen filter blur-[100px] animate-float" style="animation-duration: 18s; animation-delay: 5s;"></div>
+    </div>
+
+    <!-- Navigation -->
+    <header id="navbar" class="fixed w-full top-0 z-50 transition-all duration-300 px-4 md:px-12 py-4">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center gap-8">
+                <!-- Logo -->
+                <a href="#" class="text-brand font-bold text-3xl md:text-4xl tracking-tighter uppercase" style="font-family: 'Arial Black', sans-serif; text-shadow: 0 2px 10px rgba(229,9,20,0.5);">
+                    Popcorn TV
+                </a>
+                
+                <!-- Liens Desktop -->
+                <nav class="hidden md:flex gap-6 text-sm text-gray-300 font-medium">
+                    <a href="#accueil" class="hover:text-white transition-colors">Accueil</a>
+                    <a href="#concept" class="hover:text-white transition-colors">Le Concept</a>
+                    <a href="#offres" class="hover:text-white transition-colors">Nos Offres</a>
+                    <a href="#contact" class="hover:text-white transition-colors">Contact</a>
+                </nav>
+            </div>
+            
+            <div class="flex items-center gap-4">
+                <a href="#offres" class="hidden md:block bg-brand hover:bg-brand-dark text-white px-5 py-2.5 rounded-full font-bold transition-all shadow-[0_0_15px_rgba(229,9,20,0.4)] hover:shadow-[0_0_25px_rgba(229,9,20,0.6)] text-sm">
+                    S'abonner
+                </a>
+                <!-- Menu Mobile (Bouton simple) -->
+                <button id="mobileMenuBtn" class="md:hidden text-white hover:text-brand transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Menu Mobile Déroulant -->
+        <div id="mobileMenu" class="md:hidden hidden bg-black/90 backdrop-blur-xl absolute top-full left-0 w-full border-t border-white/10 flex flex-col items-center py-6 gap-6 shadow-2xl">
+            <a href="#accueil" class="mobile-link text-lg font-medium hover:text-brand transition-colors">Accueil</a>
+            <a href="#concept" class="mobile-link text-lg font-medium hover:text-brand transition-colors">Le Concept</a>
+            <a href="#offres" class="mobile-link text-lg font-medium hover:text-brand transition-colors">Nos Offres</a>
+            <a href="#contact" class="mobile-link text-lg font-medium text-brand transition-colors">Contact</a>
+        </div>
+    </header>
+
+    <!-- Section Hero (Accueil) -->
+    <section id="accueil" class="relative h-[85vh] w-full flex items-center justify-start px-4 md:px-12 overflow-hidden perspective-1000">
+        <!-- Overlay Image Hero -->
+        <div class="absolute inset-0 w-full h-full z-0">
+            <img src="https://images.unsplash.com/photo-1593784991095-a205069470b6?q=80&w=2070&auto=format&fit=crop" alt="Cinéma maison" class="w-full h-full object-cover opacity-20 mix-blend-overlay">
+            <!-- Dégradé gauche -->
+            <div class="absolute inset-0 bg-gradient-to-r from-[#050505] via-[#050505]/60 to-transparent"></div>
+            <!-- Dégradé bas -->
+            <div class="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent"></div>
+        </div>
+
+        <!-- Contenu Hero -->
+        <div class="relative z-30 max-w-2xl mt-16 card-3d-effect" style="transform: translateZ(50px);">
+            <div class="inline-block bg-brand/20 border border-brand/50 text-white px-4 py-1.5 rounded-full text-xs font-bold tracking-widest mb-6 shadow-[0_0_15px_rgba(229,9,20,0.3)] backdrop-blur-md">
+                PROFITEZ ET STREAMEZ EN ILLIMITÉ
+            </div>
+            <h1 class="text-4xl md:text-6xl font-black mb-6 leading-tight drop-shadow-2xl tracking-tight">
+                L'expérience ultime.<br>Où vous voulez.
+            </h1>
+            <p class="text-lg md:text-xl text-gray-300 mb-8 font-light drop-shadow-lg leading-relaxed">
+                Découvrez nos nouvelles offres IPTV. Un catalogue époustouflant, une stabilité à toute épreuve et la meilleure qualité audio/visuelle disponible.
+            </p>
+            
+            <div class="flex flex-col sm:flex-row gap-4 mt-8">
+                <a href="#offres" class="flex items-center justify-center gap-2 bg-white text-black hover:bg-gray-200 px-8 py-4 rounded-full font-bold text-lg transition-colors shadow-[0_0_20px_rgba(255,255,255,0.2)] hover:shadow-[0_0_30px_rgba(255,255,255,0.4)]">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                    Voir nos offres IPTV
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section Concept / Avantages -->
+    <section id="concept" class="py-16 px-4 md:px-12 relative z-20 -mt-10">
+        <h2 class="text-2xl md:text-3xl font-bold mb-8 text-white text-center md:text-left drop-shadow-md">L'excellence Popcorn TV</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="card-3d-effect glass-panel p-8 rounded-2xl transition-all">
+                <div class="bg-brand/20 w-14 h-14 rounded-full flex items-center justify-center mb-6 text-brand shadow-[0_0_15px_rgba(229,9,20,0.4)] border border-brand/30">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                </div>
+                <h3 class="text-xl font-bold mb-3">Catalogue Illimité</h3>
+                <p class="text-gray-400 font-light leading-relaxed">Accédez instantanément à toutes les nouveautés, sorties cinéma, séries exclusives et évènements sportifs en direct.</p>
+            </div>
+            <div class="card-3d-effect glass-panel p-8 rounded-2xl transition-all">
+                <div class="bg-brand/20 w-14 h-14 rounded-full flex items-center justify-center mb-6 text-brand shadow-[0_0_15px_rgba(229,9,20,0.4)] border border-brand/30">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                </div>
+                <h3 class="text-xl font-bold mb-3">Stabilité Renforcée</h3>
+                <p class="text-gray-400 font-light leading-relaxed">Profitez de serveurs ultra-solides garantissant un streaming sans coupure, adapté à une utilisation quotidienne intensive.</p>
+            </div>
+            <div class="card-3d-effect glass-panel p-8 rounded-2xl transition-all">
+                <div class="bg-brand/20 w-14 h-14 rounded-full flex items-center justify-center mb-6 text-brand shadow-[0_0_15px_rgba(229,9,20,0.4)] border border-brand/30">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2v6h-6"></path><path d="M3 12a9 9 0 0 1 15-6.7L21 8"></path><path d="M3 22v-6h6"></path><path d="M21 12a9 9 0 0 1-15 6.7L3 16"></path></svg>
+                </div>
+                <h3 class="text-xl font-bold mb-3">Qualité Parfaite</h3>
+                <p class="text-gray-400 font-light leading-relaxed">Une image claire, fluide, et jusqu'à la perfection audio/visuelle selon l'abonnement choisi pour vos soirées cinéma.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section Assistant IA Gemini -->
+    <section id="ia-reco" class="py-16 px-4 md:px-12 relative z-20">
+        <div class="max-w-4xl mx-auto relative z-10">
+            <div class="text-center mb-10">
+                <div class="inline-flex items-center gap-2 glass-panel px-5 py-2 rounded-full text-sm font-bold tracking-wider mb-6">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-yellow-400"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"></path></svg>
+                    PROPULSÉ PAR L'IA
+                </div>
+                <h2 class="text-3xl md:text-5xl font-bold mb-4 text-white drop-shadow-lg">L'Oracle Cinéma ✨</h2>
+                <p class="text-gray-400 text-lg font-light">Vous ne savez pas quoi regarder ce soir ? Décrivez simplement votre humeur, vos envies ou un thème farfelu, et notre intelligence artificielle vous trouvera le film parfait.</p>
+            </div>
+
+            <div class="glass-panel rounded-3xl p-6 md:p-8 shadow-2xl relative overflow-hidden">
+                <form id="ai-form" class="relative z-10">
+                    <div class="flex flex-col md:flex-row gap-4">
+                        <input type="text" id="ai-input" required class="flex-grow glass-input rounded-xl p-4 text-white text-lg focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors placeholder-gray-500" placeholder="Ex: Un film de SF des années 80 drôle avec des aliens...">
+                        <button type="submit" id="ai-btn" class="bg-white text-black hover:bg-gray-200 px-8 py-4 rounded-xl font-bold text-lg transition-all flex items-center justify-center gap-2 whitespace-nowrap shadow-lg">
+                            Trouver un film
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Zone de chargement -->
+                <div id="ai-loading" class="hidden flex-col items-center justify-center py-12">
+                    <svg class="animate-spin h-10 w-10 text-white mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <p class="text-gray-300 animate-pulse font-medium">L'Oracle fouille dans des milliers de films...</p>
+                </div>
+
+                <!-- Zone d'affichage des résultats -->
+                <div id="ai-results" class="hidden grid-cols-1 md:grid-cols-3 gap-6 mt-8 pt-8 border-t border-white/10">
+                    <!-- Les résultats seront injectés ici -->
+                </div>
+                
+                <div id="ai-error" class="hidden text-brand text-center mt-6 p-4 bg-brand/10 border border-brand/30 rounded-lg backdrop-blur-sm">
+                    Oups, l'Oracle a eu un problème de connexion. Veuillez réessayer.
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section Aperçu "Catalogue" -->
+    <section class="py-8 relative z-20">
+        <div class="mb-10">
+            <h2 class="text-xl md:text-2xl font-bold mb-6 px-4 md:px-12 text-white drop-shadow-md">Populaire sur Popcorn TV</h2>
+            <div class="relative group">
+                <div id="row1" class="flex gap-4 overflow-x-auto no-scrollbar px-4 md:px-12 pb-8 pt-2 snap-x">
+                    <script>
+                        const row1Images = [
+                            '1536440136628-849c177e76a1', '1626814026160-2237a95fc5a0', '1616530940355-351fabd9524b', 
+                            '1585647347392-50d4b1a13e28', '1574267432553-4b4628081c31', '1598899134739-24c46f58b8c0',
+                            '1535016120720-40c746da90ab', '1604998103924-89e012e5265a'
+                        ];
+                        row1Images.forEach(id => {
+                            document.write(`
+                                <div class="card-3d-effect poster-card flex-none w-[140px] md:w-[220px] aspect-[2/3] bg-black/50 rounded-lg overflow-hidden snap-start relative cursor-pointer group/poster shadow-xl border border-white/5">
+                                    <img src="https://images.unsplash.com/photo-${id}?q=80&w=400&auto=format&fit=crop" class="w-full h-full object-cover opacity-90 group-hover/poster:opacity-100 transition-opacity" alt="Affiche film">
+                                    <div class="absolute inset-0 bg-black/40 opacity-0 group-hover/poster:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[2px]">
+                                        <div class="bg-brand/90 p-3 rounded-full text-white transform scale-50 group-hover/poster:scale-100 transition-transform duration-300">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                                        </div>
+                                    </div>
+                                </div>
+                            `);
+                        });
+                    </script>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section Nos Offres IPTV / Prix -->
+    <section id="offres" class="py-20 px-4 md:px-12 relative overflow-hidden z-20">
+        <div class="text-center max-w-3xl mx-auto mb-16 relative z-10">
+            <h2 class="text-3xl md:text-5xl font-black mb-6 text-white drop-shadow-xl">Nos Offres IPTV</h2>
+            <p class="text-gray-300 text-lg font-light">Choisissez l'abonnement qui correspond à vos besoins et profitez d'un accès immédiat à notre catalogue.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto relative z-10">
+            <!-- Offre 1 : BASIC -->
+            <div class="card-3d-effect glass-panel rounded-3xl flex flex-col p-8 relative overflow-hidden group">
+                <div class="mb-6 relative z-10 text-center">
+                    <h3 class="text-2xl font-black text-white uppercase tracking-wider mb-2 drop-shadow-md">Basic</h3>
+                    <div class="flex justify-center gap-1 mb-4 text-yellow-400 drop-shadow-[0_0_8px_rgba(250,204,21,0.5)]">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                    </div>
+                    <div class="inline-block bg-white/10 backdrop-blur-md border border-white/20 text-white px-6 py-2 rounded-full text-3xl font-bold shadow-inner">
+                        50€
+                    </div>
+                </div>
+                <ul class="flex-grow space-y-5 text-sm text-gray-300 mb-8 relative z-10 font-light">
+                    <li>
+                        <strong class="text-white block mb-1 font-semibold">Contenu :</strong>
+                        catalogue standard, les programmes les plus demandés
+                    </li>
+                    <li>
+                        <strong class="text-white block mb-1 font-semibold">Stabilité :</strong>
+                        correcte, adaptée à un usage quotidien
+                    </li>
+                    <li>
+                        <strong class="text-white block mb-1 font-semibold">Qualité :</strong>
+                        image claire et fluide
+                    </li>
+                </ul>
+                <a href="#contact" onclick="selectPlan('50');" class="block w-full text-center bg-white/10 hover:bg-white/20 text-white py-4 rounded-xl font-bold transition-colors border border-white/10">
+                    Choisir Basic
+                </a>
+            </div>
+
+            <!-- Offre 2 : PRIME -->
+            <div class="card-3d-effect glass-panel rounded-3xl border border-brand/50 flex flex-col p-8 relative shadow-[0_0_40px_rgba(229,9,20,0.2)] group overflow-hidden transform md:-translate-y-6">
+                <div class="absolute inset-0 bg-gradient-to-b from-brand/20 to-transparent opacity-50"></div>
+                <div class="absolute top-0 left-1/2 -translate-x-1/2 bg-brand text-white px-5 py-1.5 rounded-b-xl text-xs font-bold tracking-widest z-10 shadow-[0_0_15px_rgba(229,9,20,0.5)]">
+                    RECOMMANDÉ
+                </div>
+                <div class="mb-6 mt-4 relative z-10 text-center">
+                    <h3 class="text-3xl font-black text-white uppercase tracking-wider mb-2 drop-shadow-xl">Prime</h3>
+                    <div class="flex justify-center gap-1 mb-4 text-yellow-400 drop-shadow-[0_0_8px_rgba(250,204,21,0.5)]">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                    </div>
+                    <div class="inline-block bg-brand text-white px-8 py-2 rounded-full text-4xl font-black shadow-[0_0_20px_rgba(229,9,20,0.4)] border border-white/20">
+                        75€
+                    </div>
+                </div>
+                <ul class="flex-grow space-y-5 text-sm text-gray-200 mb-8 relative z-10 font-light">
+                    <li>
+                        <strong class="text-white block mb-1 font-semibold">Contenu :</strong>
+                        catalogue complet avec films, séries et événements exclusifs
+                    </li>
+                    <li>
+                        <strong class="text-white block mb-1 font-semibold">Stabilité :</strong>
+                        renforcée, connexions plus fluides
+                    </li>
+                    <li>
+                        <strong class="text-white block mb-1 font-semibold">Qualité :</strong>
+                        très bonne
+                    </li>
+                </ul>
+                <a href="#contact" onclick="selectPlan('75');" class="block w-full text-center bg-brand hover:bg-brand-dark text-white py-4 rounded-xl font-bold transition-all shadow-[0_0_20px_rgba(229,9,20,0.4)] relative z-10">
+                    Choisir Prime
+                </a>
+            </div>
+
+            <!-- Offre 3 : ULTIMATE -->
+            <div class="card-3d-effect glass-panel rounded-3xl border border-purple-500/30 flex flex-col p-8 relative overflow-hidden group">
+                <div class="absolute inset-0 bg-gradient-to-br from-purple-900/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div class="mb-6 relative z-10 text-center">
+                    <h3 class="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400 uppercase tracking-wider mb-2 drop-shadow-md">Ultimate</h3>
+                    <div class="flex justify-center gap-1 mb-4 text-yellow-400 drop-shadow-[0_0_8px_rgba(250,204,21,0.5)]">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                    </div>
+                    <div class="inline-block bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-2 rounded-full text-3xl font-bold shadow-[0_0_15px_rgba(168,85,247,0.4)] border border-white/20">
+                        99€
+                    </div>
+                </div>
+                <ul class="flex-grow space-y-5 text-sm text-gray-300 mb-8 relative z-10 font-light">
+                    <li>
+                        <strong class="text-white block mb-1 font-semibold">Contenu :</strong>
+                        plus que complet, toutes les nouveautés et sorties instantanées
+                    </li>
+                    <li>
+                        <strong class="text-white block mb-1 font-semibold">Stabilité :</strong>
+                        ultra solide, streaming sans coupure
+                    </li>
+                    <li>
+                        <strong class="text-white block mb-1 font-semibold">Qualité :</strong>
+                        parfaite, la meilleure qualité audio/visuelle disponible
+                    </li>
+                </ul>
+                <a href="#contact" onclick="selectPlan('99');" class="block w-full text-center bg-white/10 hover:bg-gradient-to-r hover:from-purple-600 hover:to-pink-600 border border-purple-500/50 hover:border-transparent text-white py-4 rounded-xl font-bold transition-all relative z-10">
+                    Choisir Ultimate
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section Paiement Progressif -->
+    <section id="contact" class="py-20 px-4 md:px-12 relative z-20">
+        <div class="max-w-4xl mx-auto glass-panel p-8 md:p-12 rounded-3xl shadow-2xl relative overflow-hidden border-t border-white/20">
+            
+            <div class="text-center mb-10">
+                <h2 class="text-3xl md:text-4xl font-bold text-white mb-4 drop-shadow-lg">Finaliser votre commande</h2>
+                <p class="text-gray-300 font-light">Suivez les étapes ci-dessous pour activer votre abonnement et profiter de votre contenu sans attendre.</p>
+            </div>
+
+            <!-- Message de succès -->
+            <div id="successMessage" class="hidden glass-panel border border-green-500/50 bg-green-500/10 text-white p-8 rounded-2xl mb-6 text-center animate-fade-in-up">
+                <div class="bg-green-500/20 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 shadow-[0_0_20px_rgba(34,197,94,0.4)]">
+                    <svg class="w-10 h-10 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
+                </div>
+                <h3 class="text-2xl font-bold mb-2">Paiement validé avec succès !</h3>
+                <p class="text-gray-300">Merci pour votre commande. Nos équipes s'occupent de vous, vous recevrez bientôt un email avec la suite des instructions.</p>
+            </div>
+
+            <form id="checkoutForm" class="space-y-10 relative z-10">
+                
+                <!-- ÉTAPE 1 : Choix de l'abonnement -->
+                <div id="step1" class="space-y-5">
+                    <h3 class="text-xl font-semibold text-white flex items-center gap-3"><span class="bg-brand text-white w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold shadow-[0_0_10px_rgba(229,9,20,0.5)]">1</span> Choix de l'abonnement IPTV</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <label class="relative flex cursor-pointer rounded-xl glass-input p-4 transition-all has-[:checked]:border-brand has-[:checked]:bg-brand/20 has-[:checked]:shadow-[0_0_15px_rgba(229,9,20,0.2)]">
+                            <input type="radio" name="plan" id="plan_50" value="50" class="sr-only">
+                            <div class="flex flex-col text-center w-full">
+                                <span class="block text-sm font-bold text-white uppercase tracking-wider">Basic</span>
+                                <span class="mt-2 flex items-center justify-center text-2xl font-black text-white">50 €</span>
+                            </div>
+                        </label>
+                        <label class="relative flex cursor-pointer rounded-xl glass-input p-4 transition-all has-[:checked]:border-brand has-[:checked]:bg-brand/20 has-[:checked]:shadow-[0_0_15px_rgba(229,9,20,0.2)]">
+                            <input type="radio" name="plan" id="plan_75" value="75" class="sr-only">
+                            <div class="flex flex-col text-center w-full">
+                                <span class="block text-sm font-bold text-white uppercase tracking-wider">Prime</span>
+                                <span class="mt-2 flex items-center justify-center text-2xl font-black text-white">75 €</span>
+                            </div>
+                        </label>
+                        <label class="relative flex cursor-pointer rounded-xl glass-input p-4 transition-all has-[:checked]:border-purple-500 has-[:checked]:bg-purple-600/20 has-[:checked]:shadow-[0_0_15px_rgba(168,85,247,0.2)]">
+                            <input type="radio" name="plan" id="plan_99" value="99" class="sr-only">
+                            <div class="flex flex-col text-center w-full">
+                                <span class="block text-sm font-bold text-white uppercase tracking-wider">Ultimate</span>
+                                <span class="mt-2 flex items-center justify-center text-2xl font-black text-white">99 €</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- ÉTAPE 2 : Mode de réception -->
+                <div id="step2" class="space-y-5 hidden animate-fade-in-up border-t border-white/10 pt-6">
+                    <h3 class="text-xl font-semibold text-white flex items-center gap-3"><span class="bg-brand text-white w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold shadow-[0_0_10px_rgba(229,9,20,0.5)]">2</span> Mode de réception</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <label class="relative flex cursor-pointer rounded-xl glass-input p-4 transition-all has-[:checked]:border-brand has-[:checked]:bg-brand/20 has-[:checked]:shadow-[0_0_15px_rgba(229,9,20,0.2)]">
+                            <input type="radio" name="delivery" id="delivery_online" value="online" class="sr-only">
+                            <div class="flex flex-col text-center w-full">
+                                <span class="block text-sm font-bold text-white uppercase tracking-wider">Accès en Ligne</span>
+                                <span class="mt-1 flex items-center justify-center text-sm text-gray-400 font-light">Identifiants immédiats par email</span>
+                            </div>
+                        </label>
+                        <label class="relative flex cursor-pointer rounded-xl glass-input p-4 transition-all has-[:checked]:border-brand has-[:checked]:bg-brand/20 has-[:checked]:shadow-[0_0_15px_rgba(229,9,20,0.2)]">
+                            <input type="radio" name="delivery" id="delivery_physical" value="physical" class="sr-only">
+                            <div class="flex flex-col text-center w-full">
+                                <span class="block text-sm font-bold text-white uppercase tracking-wider">Disque Dur Physique</span>
+                                <span class="mt-1 flex items-center justify-center text-sm text-gray-400 font-light">Livraison à domicile</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- ÉTAPE 3 : Coordonnées -->
+                <div id="step3" class="space-y-5 hidden animate-fade-in-up border-t border-white/10 pt-6">
+                    <h3 class="text-xl font-semibold text-white flex items-center gap-3"><span class="bg-brand text-white w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold shadow-[0_0_10px_rgba(229,9,20,0.5)]">3</span> Vos coordonnées</h3>
+                    
+                    <div class="grid grid-cols-1 gap-6">
+                        <div>
+                            <label for="name" class="block text-sm font-medium text-gray-300 mb-2">Prénom et Nom <span class="text-brand">*</span></label>
+                            <input type="text" id="name" required class="w-full glass-input rounded-xl p-4 text-white focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors placeholder-gray-500" placeholder="Jean Dupont">
+                        </div>
+                        <div>
+                            <label for="email" class="block text-sm font-medium text-gray-300 mb-2">Adresse Email <span class="text-brand">*</span></label>
+                            <input type="email" id="email" required class="w-full glass-input rounded-xl p-4 text-white focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors placeholder-gray-500" placeholder="jean@exemple.com">
+                        </div>
+                    </div>
+                    
+                    <!-- Champs conditionnels: Confirmation email -->
+                    <div id="online_fields" class="grid grid-cols-1 gap-6 mt-4 hidden animate-fade-in-up">
+                        <div>
+                            <label for="email_confirm" class="block text-sm font-medium text-gray-300 mb-2">Confirmez votre Email <span class="text-brand">*</span></label>
+                            <input type="email" id="email_confirm" class="w-full glass-input rounded-xl p-4 text-white focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors placeholder-gray-500" placeholder="Retapez votre email">
+                            <p class="text-xs text-brand mt-2 hidden font-bold" id="email_error">Les adresses email ne correspondent pas.</p>
+                        </div>
+                    </div>
+
+                    <!-- Champs conditionnels: Adresse postale -->
+                    <div id="physical_fields" class="space-y-6 mt-4 hidden animate-fade-in-up">
+                        <div>
+                            <label for="address" class="block text-sm font-medium text-gray-300 mb-2">Adresse Postale Complète <span class="text-brand">*</span></label>
+                            <input type="text" id="address" class="w-full glass-input rounded-xl p-4 text-white focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors placeholder-gray-500" placeholder="123 avenue du Cinéma">
+                        </div>
+                        <div class="grid grid-cols-2 gap-6">
+                            <div>
+                                <label for="zipcode" class="block text-sm font-medium text-gray-300 mb-2">Code Postal <span class="text-brand">*</span></label>
+                                <input type="text" id="zipcode" class="w-full glass-input rounded-xl p-4 text-white focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors placeholder-gray-500" placeholder="75000">
+                            </div>
+                            <div>
+                                <label for="city" class="block text-sm font-medium text-gray-300 mb-2">Ville <span class="text-brand">*</span></label>
+                                <input type="text" id="city" class="w-full glass-input rounded-xl p-4 text-white focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors placeholder-gray-500" placeholder="Paris">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="form_errors" class="w-full p-4 bg-brand/20 border border-brand/50 rounded-xl text-white text-sm hidden font-bold text-center">Veuillez remplir correctement tous les champs requis.</div>
+
+                    <button type="button" id="btn-validate-step3" class="w-full mt-8 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold py-4 px-4 rounded-xl transition-all flex items-center justify-center gap-3 backdrop-blur-md">
+                        Continuer vers le paiement sécurisé
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                    </button>
+                </div>
+
+                <!-- ÉTAPE 4 : Paiement -->
+                <div id="step4" class="space-y-6 pt-6 hidden animate-fade-in-up border-t border-white/10 mt-8">
+                    <h3 class="text-xl font-semibold text-white flex items-center gap-3"><span class="bg-brand text-white w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold shadow-[0_0_10px_rgba(229,9,20,0.5)]">4</span> Paiement sécurisé</h3>
+                    <div class="glass-input rounded-2xl p-8 flex flex-col items-center justify-center text-center">
+                        <div class="text-gray-300 mb-2">Montant à régler</div>
+                        <div id="total_display" class="text-5xl font-black mb-8 text-white drop-shadow-md">0 €</div>
+                        
+                        <!-- Conteneur Bouton PayPal -->
+                        <div id="paypal-button-container" class="w-full max-w-md relative z-10 min-h-[50px]"></div>
+                    </div>
+                </div>
+
+            </form>
+            <p class="text-xs text-gray-400 text-center mt-8 font-light flex items-center justify-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                Paiement 100% sécurisé crypté.
+            </p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-black/50 backdrop-blur-xl border-t border-white/10 py-10 px-4 md:px-12 text-center md:text-left relative z-20">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+            <div>
+                <a href="#" class="text-white font-black text-2xl tracking-tighter uppercase mb-2 block drop-shadow-md" style="font-family: 'Arial Black', sans-serif;">
+                    Popcorn <span class="text-brand">TV</span>
+                </a>
+                <p class="text-gray-400 text-sm font-light">Le divertissement sans limite, où vous voulez.</p>
+            </div>
+            
+            <div class="flex gap-6 text-sm text-gray-400 font-medium">
+                <a href="#" class="hover:text-white transition-colors">Mentions légales</a>
+                <a href="#" class="hover:text-white transition-colors">Politique de confidentialité</a>
+                <a href="#contact" class="hover:text-white transition-colors">Contact</a>
+            </div>
+            
+            <div class="text-gray-500 text-sm font-light">
+                &copy; 2024 Popcorn TV. Tous droits réservés.
+            </div>
+        </div>
+    </footer>
+
+    <!-- BOUTON FLOTTANT SNAPCHAT (En bas à droite) -->
+    <a href="https://www.snapchat.com/add/popcorn.tvv" target="_blank" rel="noopener noreferrer" 
+       class="fixed bottom-6 right-6 md:bottom-8 md:right-8 z-[100] bg-[#FFFC00] p-3.5 md:p-4 rounded-full shadow-[0_0_25px_rgba(255,252,0,0.5)] hover:scale-110 hover:shadow-[0_0_40px_rgba(255,252,0,0.7)] transition-all flex items-center justify-center group animate-fade-in-up border-[3px] border-black"
+       style="animation-delay: 1s;" aria-label="Nous contacter sur Snapchat">
+        
+        <!-- Le vrai fantôme Snapchat avec fond blanc et contour noir -->
+        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 1024 1024" fill="#ffffff" stroke="#000000" stroke-width="40" stroke-linejoin="round" class="transform group-hover:rotate-12 transition-transform duration-300">
+            <path d="M512 85.333c-157.76 0-252.16 99.413-259.947 241.6-4.587 79.573 37.653 141.76 65.28 195.413 13.973 26.987 27.2 52.373 21.653 78.4-3.52 16.32-16.747 27.733-35.307 35.307-39.787 16.107-95.253 25.813-154.24 35.307-47.573 8.32-88.64 16.32-108.907 33.707-19.627 17.6-13.44 46.187-8.32 64.96 4.373 22.4 13.547 46.933 21.973 68.693 6.933 17.707 13.12 33.707 7.787 46.827-4.16 10.347-13.333 16.533-24.96 17.92-23.787 2.453-48.747 4.8-74.667 7.253-15.68 1.493-27.52 5.013-33.813 10.027-14.72 11.84-21.76 29.547-21.76 54.4 0 25.813 21.013 41.707 55.467 46.08 52.693 6.4 117.653 14.187 174.4 21.12 49.387 6.08 96.64 11.947 122.027 17.28 47.787 10.133 65.387 39.573 80.107 63.68 12.8 21.333 24.747 41.6 62.4 41.6 13.867 0 29.013-2.667 45.44-5.333 17.173-2.773 34.667-5.653 53.013-5.653 18.24 0 35.733 2.88 52.907 5.653 16.32 2.667 31.467 5.333 45.333 5.333 37.653 0 49.6-20.267 62.4-41.6 14.72-24.107 32.32-53.547 80.107-63.68 25.387-5.333 72.64-11.2 122.027-17.28 56.747-6.933 121.707-14.72 174.4-21.12 34.453-4.373 55.467-20.267 55.467-46.08 0-24.853-7.04-42.56-21.76-54.4-6.293-5.013-18.133-8.533-33.813-10.027-25.92-2.453-50.88-4.8-74.667-7.253-11.627-1.387-20.8-7.573-24.96-17.92-5.333-13.12.853-29.12 7.787-46.827 8.427-21.76 17.6-46.293 21.973-68.693 5.12-18.773 11.307-47.36-8.32-64.96-20.267-17.387-61.333-25.387-108.907-33.707-58.987-9.493-114.453-19.2-154.24-35.307-18.56-7.573-31.787-18.987-35.307-35.307-5.547-26.027 7.68-51.413 21.653-78.4 27.627-53.653 69.867-115.84 65.28-195.413C764.16 184.747 669.76 85.333 512 85.333z"/>
+        </svg>
+
+        <!-- Bulle d'information (Tooltip) au survol re-stylisée -->
+        <span class="absolute right-full mr-5 bg-[#FFFC00] text-black px-5 py-2.5 rounded-2xl text-sm font-black opacity-0 pointer-events-none group-hover:opacity-100 transition-all transform translate-x-4 group-hover:translate-x-0 shadow-[0_4px_20px_rgba(255,252,0,0.4)] whitespace-nowrap hidden md:flex items-center gap-2 border-[3px] border-black">
+            Nous contacter
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+        </span>
+    </a>
+
+    <!-- Scripts pour l'interactivité -->
+    <script>
+        // Effet de scroll sur la barre de navigation
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('header-scrolled');
+            } else {
+                navbar.classList.remove('header-scrolled');
+            }
+        });
+
+        // Navigation fluide (empêche la page blanche)
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault(); 
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return; 
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    const headerHeight = document.getElementById('navbar').offsetHeight;
+                    const elementPosition = targetElement.getBoundingClientRect().top;
+                    const offsetPosition = elementPosition + window.scrollY - headerHeight;
+
+                    window.scrollTo({
+                        top: offsetPosition,
+                        behavior: "smooth"
+                    });
+                }
+                if (this.classList.contains('mobile-link') || this.closest('#mobileMenu')) {
+                    document.getElementById('mobileMenu').classList.add('hidden');
+                }
+            });
+        });
+
+        // --- GESTION DU FORMULAIRE PROGRESSIF ---
+        const step2 = document.getElementById('step2');
+        const step3 = document.getElementById('step3');
+        const step4 = document.getElementById('step4');
+        const totalDisplay = document.getElementById('total_display');
+        
+        // Eléments de champs
+        const onlineFields = document.getElementById('online_fields');
+        const physicalFields = document.getElementById('physical_fields');
+        const formErrors = document.getElementById('form_errors');
+        const emailError = document.getElementById('email_error');
+
+        // Fonction pour sélectionner le pack depuis les cartes au-dessus
+        function selectPlan(value) {
+            document.getElementById('plan_' + value).checked = true;
+            updateTotalAndRevealStep2();
+        }
+
+        // ETAPE 1 -> ETAPE 2
+        function updateTotalAndRevealStep2() {
+            const selectedPlan = document.querySelector('input[name="plan"]:checked');
+            if (selectedPlan) {
+                totalDisplay.innerText = `${selectedPlan.value} €`;
+                // Afficher l'étape 2 (livraison)
+                if(step2.classList.contains('hidden')) {
+                    step2.classList.remove('hidden');
+                    setTimeout(() => step2.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 100);
+                }
+            }
+        }
+
+        // Ecouteurs sur les choix d'abonnement
+        document.querySelectorAll('input[name="plan"]').forEach(radio => {
+            radio.addEventListener('change', updateTotalAndRevealStep2);
+        });
+
+        // ETAPE 2 -> ETAPE 3
+        function revealStep3AndSetupFields() {
+            const isOnline = document.getElementById('delivery_online').checked;
+            
+            // Afficher l'étape 3
+            if(step3.classList.contains('hidden')) {
+                step3.classList.remove('hidden');
+            }
+
+            // Gérer les champs spécifiques
+            if (isOnline) {
+                onlineFields.classList.remove('hidden');
+                physicalFields.classList.add('hidden');
+            } else {
+                onlineFields.classList.add('hidden');
+                physicalFields.classList.remove('hidden');
+            }
+            
+            setTimeout(() => step3.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 100);
+        }
+
+        document.getElementById('delivery_online').addEventListener('change', revealStep3AndSetupFields);
+        document.getElementById('delivery_physical').addEventListener('change', revealStep3AndSetupFields);
+
+        // ETAPE 3 -> ETAPE 4 (Validation avant paiement)
+        document.getElementById('btn-validate-step3').addEventListener('click', () => {
+            formErrors.classList.add('hidden');
+            emailError.classList.add('hidden');
+            
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const isOnline = document.getElementById('delivery_online').checked;
+
+            let isValid = true;
+
+            // Vérif base
+            if (!name || !email) {
+                formErrors.innerText = "Veuillez renseigner votre Nom et Adresse Email.";
+                formErrors.classList.remove('hidden');
+                isValid = false;
+            } else if (isOnline) {
+                // Vérif si En Ligne
+                const emailConfirm = document.getElementById('email_confirm').value.trim();
+                if (!emailConfirm) {
+                    formErrors.innerText = "Veuillez confirmer votre adresse email.";
+                    formErrors.classList.remove('hidden');
+                    isValid = false;
+                } else if (email !== emailConfirm) {
+                    emailError.classList.remove('hidden');
+                    formErrors.innerText = "Les adresses email ne correspondent pas.";
+                    formErrors.classList.remove('hidden');
+                    isValid = false;
+                }
+            } else {
+                // Vérif si Disque Physique
+                const address = document.getElementById('address').value.trim();
+                const zipcode = document.getElementById('zipcode').value.trim();
+                const city = document.getElementById('city').value.trim();
+                if (!address || !zipcode || !city) {
+                    formErrors.innerText = "Veuillez renseigner votre adresse postale complète.";
+                    formErrors.classList.remove('hidden');
+                    isValid = false;
+                }
+            }
+
+            if (isValid) {
+                // Rendre le bouton moins proéminent et afficher l'étape finale
+                document.getElementById('btn-validate-step3').classList.replace('bg-white/10', 'bg-green-500/20');
+                document.getElementById('btn-validate-step3').classList.replace('hover:bg-white/20', 'hover:bg-green-500/30');
+                document.getElementById('btn-validate-step3').classList.replace('border-white/20', 'border-green-500/50');
+                document.getElementById('btn-validate-step3').classList.replace('text-white', 'text-green-400');
+                document.getElementById('btn-validate-step3').innerHTML = 'Informations validées ✓';
+                
+                step4.classList.remove('hidden');
+                setTimeout(() => step4.scrollIntoView({ behavior: 'smooth', block: 'center' }), 200);
+            }
+        });
+
+
+        // --- Intégration PayPal (Simulation pour l'environnement de prévisualisation) ---
+        const paypalContainer = document.getElementById('paypal-button-container');
+        paypalContainer.innerHTML = `
+            <button type="button" id="mock-paypal-btn" class="w-full bg-[#FFC439] hover:bg-[#F2BA36] text-[#003087] font-bold py-4 px-4 rounded-xl transition-colors flex items-center justify-center shadow-[0_0_20px_rgba(255,196,57,0.3)] hover:shadow-[0_0_30px_rgba(255,196,57,0.5)]">
+                <span class="italic text-xl font-extrabold mr-1">Pay</span><span class="italic text-xl font-extrabold text-[#0079C1]">Pal</span>
+                <span class="ml-2 font-semibold text-black/60 text-sm">(Simulation de paiement)</span>
+            </button>
+        `;
+
+        document.getElementById('mock-paypal-btn').addEventListener('click', () => {
+            const selectedPlan = document.querySelector('input[name="plan"]:checked').value;
+            const btn = document.getElementById('mock-paypal-btn');
+            
+            btn.innerHTML = `<svg class="animate-spin h-6 w-6 text-[#003087]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg><span class="ml-3 text-black font-bold">Connexion sécurisée en cours (${selectedPlan}€)...</span>`;
+            btn.classList.add('opacity-75', 'cursor-not-allowed');
+
+            setTimeout(() => {
+                document.getElementById('checkoutForm').classList.add('hidden');
+                document.getElementById('successMessage').classList.remove('hidden');
+                document.getElementById('contact').scrollIntoView({ behavior: 'smooth' });
+            }, 1500);
+        });
+
+        // Gestion du menu mobile (Bouton d'ouverture/fermeture)
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Effet 3D (Tilt) au survol de la souris
+        const cards3D = document.querySelectorAll('.card-3d-effect');
+        cards3D.forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                if (window.innerWidth < 768) return;
+                card.classList.remove('reset');
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                const rotateX = ((y - centerY) / centerY) * -10;
+                const rotateY = ((x - centerX) / centerX) * 10;
+                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+            });
+            card.addEventListener('mouseleave', () => {
+                card.classList.add('reset');
+                card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
+            });
+        });
+
+        // ==========================================
+        // INTÉGRATION API GEMINI (L'Oracle Cinéma ✨)
+        // ==========================================
+        const apiKey = ""; 
+        const aiForm = document.getElementById('ai-form');
+        const aiInput = document.getElementById('ai-input');
+        const aiBtn = document.getElementById('ai-btn');
+        const aiLoading = document.getElementById('ai-loading');
+        const aiResults = document.getElementById('ai-results');
+        const aiError = document.getElementById('ai-error');
+
+        async function fetchGeminiRecommendations(prompt) {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+            
+            const payload = {
+                contents: [{ parts: [{ text: prompt }] }],
+                systemInstruction: { 
+                    parts: [{ 
+                        text: "Tu es 'L'Oracle Cinéma', l'expert recommandation de Popcorn TV. L'utilisateur te donne son humeur ou ce qu'il a envie de regarder. Propose exactement 3 films parfaits pour lui. Retourne UNIQUEMENT une liste JSON." 
+                    }] 
+                },
+                generationConfig: {
+                    responseMimeType: "application/json",
+                    responseSchema: {
+                        type: "ARRAY",
+                        items: {
+                            type: "OBJECT",
+                            properties: {
+                                titre: { type: "STRING" },
+                                annee: { type: "STRING" },
+                                emoji: { type: "STRING", description: "Un seul emoji qui représente le film" },
+                                synopsis: { type: "STRING", description: "Un synopsis très court et accrocheur d'une phrase" }
+                            },
+                            required: ["titre", "annee", "emoji", "synopsis"]
+                        }
+                    }
+                }
+            };
+
+            const delays = [1000, 2000, 4000, 8000, 16000];
+            for (let attempt = 0; attempt <= 5; attempt++) {
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    
+                    if (!response.ok) throw new Error(`Erreur API: ${response.status}`);
+                    
+                    const data = await response.json();
+                    const textContent = data.candidates?.[0]?.content?.parts?.[0]?.text;
+                    if (!textContent) throw new Error("Réponse vide de Gemini");
+                    
+                    return JSON.parse(textContent);
+                } catch (error) {
+                    if (attempt === 5) {
+                        console.error("Gemini API a échoué après 5 tentatives:", error);
+                        throw error;
+                    }
+                    console.log(`Tentative ${attempt + 1} échouée, nouvel essai dans ${delays[attempt]}ms...`);
+                    await new Promise(res => setTimeout(res, delays[attempt]));
+                }
+            }
+        }
+
+        aiForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const prompt = aiInput.value.trim();
+            if (!prompt) return;
+
+            const originalBtnText = aiBtn.innerHTML;
+            aiBtn.innerHTML = 'Recherche en cours...';
+            aiBtn.disabled = true;
+            aiResults.classList.add('hidden');
+            aiResults.classList.remove('grid');
+            aiError.classList.add('hidden');
+            aiLoading.classList.remove('hidden');
+            aiLoading.classList.add('flex');
+
+            try {
+                const movies = await fetchGeminiRecommendations(prompt);
+                aiResults.innerHTML = '';
+                
+                movies.forEach(movie => {
+                    const card = document.createElement('div');
+                    card.className = 'glass-panel rounded-2xl p-6 hover:bg-white/10 transition-colors shadow-xl card-3d-effect';
+                    card.innerHTML = `
+                        <div class="text-5xl mb-4 drop-shadow-lg">${movie.emoji}</div>
+                        <h3 class="text-xl font-bold text-white leading-tight mb-1">${movie.titre}</h3>
+                        <div class="text-sm text-brand font-bold mb-3">${movie.annee}</div>
+                        <p class="text-gray-300 text-sm font-light leading-relaxed">${movie.synopsis}</p>
+                    `;
+                    aiResults.appendChild(card);
+                });
+
+                document.querySelectorAll('#ai-results .card-3d-effect').forEach(card => {
+                    card.addEventListener('mousemove', (e) => {
+                        if (window.innerWidth < 768) return;
+                        card.classList.remove('reset');
+                        const rect = card.getBoundingClientRect();
+                        const x = e.clientX - rect.left;
+                        const y = e.clientY - rect.top;
+                        const rotateX = (((y - (rect.height / 2)) / (rect.height / 2)) * -10);
+                        const rotateY = (((x - (rect.width / 2)) / (rect.width / 2)) * 10);
+                        card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+                    });
+                    card.addEventListener('mouseleave', () => {
+                        card.classList.add('reset');
+                        card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
+                    });
+                });
+
+                aiLoading.classList.add('hidden');
+                aiLoading.classList.remove('flex');
+                aiResults.classList.remove('hidden');
+                aiResults.classList.add('grid');
+                
+            } catch (error) {
+                aiLoading.classList.add('hidden');
+                aiLoading.classList.remove('flex');
+                aiError.classList.remove('hidden');
+            } finally {
+                aiBtn.innerHTML = originalBtnText;
+                aiBtn.disabled = false;
+            }
+        });
+
+    </script>
+</body>
+</html>
